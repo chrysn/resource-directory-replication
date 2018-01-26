@@ -1,0 +1,224 @@
+
+
+
+
+CoRE                                                          C. Amsuess
+Internet-Draft                                          January 26, 2018
+Intended status: Informational
+Expires: July 30, 2018
+
+
+                     Resource Directory Replication
+        draft-amsuess-core-resource-directory-replication-latest
+
+Abstract
+
+   Discovery of endpoints and resources in M2M applications over large
+   networks is enabled by Resource Directories, but no special
+   consideration has been given to how such directories can scale beyond
+   what can be managed by a single device.
+
+   This document explores different ways in which Resource Directories
+   can be scaled up from single network to enterprise and global scale.
+   It does not attempt to standardize any of those methods, but only to
+   demonstrate the feasibility of such extensions and to provide
+   terminology and exploratory groundwork for later documents.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on July 30, 2018.
+
+Copyright Notice
+
+   Copyright (c) 2018 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+
+
+
+Amsuess                   Expires July 30, 2018                 [Page 1]
+
+Internet-Draft       Resource Directory Replication         January 2018
+
+
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+1.  Introduction
+
+   @@@ see abstract for now
+
+2.  Terminology
+
+   @@@
+
+   Origin Server from [RFC7252]
+
+3.  Goals of upscaling
+
+   The following sections outline different reasons why a Resource
+   Directory should be scaled beyond a singe device.  Not all of them
+   will necessarily apply to all use cases, and not all solution
+   approaches might be suitable for all goals.
+
+3.1.  Large numbers of registrations
+
+   Even at 1kB of link data per registration, modern server hardware can
+   easily keep the data of millions of registrations in RAM
+   simultaneously.  Thus, the mere size of registration data is not
+   expected to be a factor that requires scaling to multiple nodes.
+
+   The traffic produced when millions of nodes with the default 24h
+   lifetime amounts to tens of exchanges per second, which is doable
+   with equal ease at central network equipment.
+
+   However, if the directory has additional interaction with its
+   registered nodes, for example because it provides proxying to
+   registered endpoints, resources like file descriptors can be
+   exhausted earlier, and the traffic load on the registration server
+   grows with the traffic it is proxying for the endpoint.
+
+3.2.  Large amounts of requests
+
+   Not all approaches to constrained restful communication use the
+   Resource Directory only in the setup stage; some are might also
+   utilize a Resource Directory in more day-to-day operation.
+
+   @@@ get some numbers on how many requests a single RD can deal with
+
+
+
+
+Amsuess                   Expires July 30, 2018                 [Page 2]
+
+Internet-Draft       Resource Directory Replication         January 2018
+
+
+3.3.  Redundancy
+
+   With the RD as a central part of CoRE infrastructures, outages can
+   affect a large number of users.
+
+   A decentralized RD should be able to deal both with scheduled
+   downtimes of hosts as well as unexpected outages of hosts or parts of
+   the network, especially with network splits between the individual
+   parts of the directory.
+
+4.  Approaches
+
+4.1.  Shared authority / anycast
+
+   When used with the CoAP protocol over UDP or DTLS, a Resource
+   Directory can be served from an anycast addresses, which is reflected
+   in the authority component of all RD resources.  From the clients'
+   point of view, all interaction happens from the same Origin Server.
+
+   In this setup, the replication is hidden from the REST interactions,
+   and takes place inside the RD server implementation or its database
+   backend.
+
+   @@@ delegation to replication under the RD
+
+4.2.  Plain caching
+
+4.3.  RD-aware caching
+
+4.4.  Distinct entry points
+
+   @@@ registration and handover
+
+   @@@ replication of contents vs forwarding of requests
+
+   @@@ using foreign registration URIs
+
+5.  Informative References
+
+   [I-D.ietf-core-resource-directory]
+              Shelby, Z., Koster, M., Bormann, C., Stok, P., and C.
+              Amsuess, "CoRE Resource Directory", draft-ietf-core-
+              resource-directory-12 (work in progress), October 2017.
+
+   [RFC7252]  Shelby, Z., Hartke, K., and C. Bormann, "The Constrained
+              Application Protocol (CoAP)", RFC 7252,
+              DOI 10.17487/RFC7252, June 2014,
+              <https://www.rfc-editor.org/info/rfc7252>.
+
+
+
+Amsuess                   Expires July 30, 2018                 [Page 3]
+
+Internet-Draft       Resource Directory Replication         January 2018
+
+
+Author's Address
+
+   Christian Amsuess
+   Hollandstr. 12/4
+   1020
+   Austria
+
+   Phone: +43-664-9790639
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Amsuess                   Expires July 30, 2018                 [Page 4]
