@@ -162,7 +162,7 @@ ignoring it on the endpoint lookup interface gives the client "wrong" results,
 though that is likely to only matter to applications that use both the lookup
 and the registration interface, like Commissioning Tools could do.
 Proxies can be configured to do content transcoding
-(cf. {{RFC8075?}} Section 6.5.2)
+(cf. {{?RFC8075}} Section 6.5.2)
 to preserve the lookup responses' original meanings.
 
 This approach does not help at all with large numbers of registrations.
@@ -279,6 +279,21 @@ when the new one on a different RD with the same endpoint name and domain arrive
 at worst there will be the same information twice from two registration resources
 available for lookup.
 
+### Loops between RDs and proxies
+
+In this configuration, it can be tempting to run a Resource Directory
+and a lookup proxy (aimed at multiple resource directories)
+on the same host.
+
+In such a setup, other aggregating lookup proxies must take care
+to only select locally registered entries.
+With the current filtering rules,
+observing the resources
+`/rd-lookup/ep?href=/*`
+and
+`/rd-lookup/res?provenance=/*`
+crudely provides that kind of filtering.
+
 # Recommendations to RD
 
 * Explicitly allow "foreign" URIs in discovery and endpoint lookup
@@ -306,7 +321,7 @@ the proxy needs a way to tell which endpoint registration submitted that link.
 That information might also be useful for other purposes.
 
 This introduces a new link attribute "provenance".
-Its value is a URI reference as described by {{RFC3986}} Section 4.1.
+Its value is a URI reference as described by {{?RFC3986}} Section 4.1.
 The URI is to be interpreted by the same rules that apply to the "anchor" attribute,
 namely by resolving the reference relative to the requested document's URI.
 The attribute should not be repeated,
@@ -389,6 +404,7 @@ until after the difference of lt and lt-age seconds have passed
 since the endpoint lookup result was obtained,
 especially if the origin server has become unavailable.
 
+Security considerations:
 Given that this leaks information about the endpoint's communication patterns,
 it may be prudent for an RD only to reveal this information on a need-to-know basis.
 
@@ -396,7 +412,211 @@ it may be prudent for an RD only to reveal this information on a need-to-know ba
 
 ## Redundant and replicated resource lookup (anycast)
 
+This scenario describes a setup where millions of devices register
+in a company-wide Resource Directory.
+
+The directory is scaled using the shared authority / anycast approach,
+and the RD implementation is backed by a NoSQL-style distributed database.
+
+            /'''''''\______/'''''\__/''''''''\
+         /-                                   -\
+         |,           NoSQL database           |
+           \,,,                           ,~''
+               \_____/'''\__________/''''   \
+            /             |                  \
+      /''''''\        /''''''\                 /''''''\
+      | RD-A |        | RD-B |                 | RD-C |
+      \______/        \______/                 \______/
+     /  |  | \        / | | | \                  | | |
+    E   E  C  E       E E E E C                  C C C
+
+(`E` and `C` represent endpoints and lookup clients, respectively)
+
+Both endloints and lookup clients receive the RD address `2001:db8::an1:ca57` is announced
+to all devices on the network using the RDAO option in IPv6 Neighbor Discovery.
+Any packages to that addresses are routed by the network
+to the closest of the three RD instances A, B and C.
+Discovery invariably looks like this:
+
+    Req: GET coap://[2001:db8::an1:ca57/.well-known/core?rt=core.rd*
+
+    Res: 2.05 Content
+    </rd>;rt="core.rd",
+    </rd-lookup/res>;rt="core.rd-lookup-res",
+    </rd-lookup/ep>;rt="core.rd-lookup-ep"
+
+An endpoint close to B would therefore register with
+
+    Req: POST coap://[2001:db8::an1:ca57]/rd?ep=endpoint1&d=facility23.eu.example.com
+    Payload:
+    </sensors/temp>;if="core.s"
+
+    Res: 2.01 Created
+    Location: /reg/123e4567-e89b-12d3-a456-426655440000
+
+Any client could immediately see that the endpoint is registered by issuing
+
+    Req: GET coap://[2001:db8::an1:ca57]/rd-lookup/ep?ep=endpoint1&d=facility23.eu.example.com
+
+    Res: 2.05 Content
+    Payload:
+    </reg/123e4567-e89b-12d3-a456-426655440000>;ep="endpoint1";
+        d="facility23.eu.example.com";con="coap://[2001:db8:23::1]"
+
+If at any point in time the RD instance B becomes unavailable,
+the registering endpoint's renewal requests will be routed
+to the next available instance, for example A.
+That instance can update the shared database with renewed lifetime
+just as B would have done.
+
+How this performs under a net split depends on the database backend.
+Registration resources based on UUIDs were chosen in this example
+because those would allow the system to keep accepting new registrations
+even in a netsplit situation;
+the risk of the registration request not being idempotent
+towards a node that switches sides during such a split is considered acceptable.
+
 ## Redundant and replicated resource lookup (distinct registration points)
+
+This scenario takes place in the same environment as the previous one.
+
+Rather than a shared database, distinct registration points are advertised.
+The advertised registration points are called RD-A to RD-C;
+independent of them are lookup proxies LP-X to LP-Z.
+Some of them run on the same hosts.
+
+            /'''''''\______/'''''\__/''''''''\
+         /-                                   -\
+         |,                                    |
+           \,,,                           ,~''
+               \_____/'''\__________/''''   \
+                |               |            \
+      /''''''\  |     /''''''\  |  /''''''\   |  /''''''\
+      | RD-A |--+     | RD-B |--+--| RD-C |   +--| LP-Z |
+      | LP-X |  |     | LP-Y |  |  |      |   |  |      |
+      \_____1/  |     \_____2/  |  \____3/    |  \_____4/
+                |               |             |
+          +--+--+            +--+--+          +--+
+          E  E  C            E  E  E          C  C
+
+The lookup proxies in this scenario are constantly observing
+the `/rd-lookup/ep?href=/*` and `/rd-lookup/res?provenance=/*` resources
+of known RDs on other hosts,
+and might get updated internally with state from a co-hosted RD
+or observe that using an internal interface.
+As there is really suitable content format and observation mechanism for those yet,
+the exchanges are partially described in words here.
+
+RDAO announcements point to the nearest host
+(whose IP address ends with the numbers of the respective box in the figure),
+and hosts that do not serve both functions provide lookup as follows:
+
+    Req: GET coap://[2001:db8:23::3]/.well-known/core?rt=core.rd*
+
+    Res: 2.05 Content
+    Payload:
+    </rd>;rt="core.rd",
+    <coap://[2001:db8:23::2]/rd-lookup/ep>;rt="core.rd-lookup-ep",
+    <coap://[2001:db8:23::2]/rd-lookup/res>;rt="core.rd-lookup-res"
+
+When a client then registers as
+
+    Req: POST coap://[2001:db8:23::3]/rd?ep=endpoint1&d=facility23.eu.example.com
+    Payload:
+    </sensors/temp>;if="core.s"
+
+    Res: 2.01 Created
+    Location: /reg/42
+
+the RD at 3 sends notifications to the observing lookup proxies X, Y and Z:
+
+    Res: Patch Result
+    Add one record: </reg/42>;ep="endpoint1";d="facility23.eu.example.com";
+        con="coap://[2001:db8:23::1]";lt-age=0
+
+As soon as that is processed, clients can query LP-Z
+
+    Req: GET coap://[2001:db8:4::4]/rd-lookup/ep?ep=endpoint1&d=facility23.eu.example.com
+
+    Res: 2.05 Content
+    Payload:
+    <coap://[2001:db8:23::3]/reg/42>;ep="endpoint1";
+        d="facility23.eu.example.com";con="coap://[2001:db8:23::1]"
+
+(Note that lt-age is elided to the client
+as per the security considerations for that information).
+
+When a net split happens that cuts LP-Z's site off the rest,
+it keeps that information available until the lt-age runs out.
+
+When RD-C unexpectedly becomes unavailable,
+endpoint1 fails to renew its registration.
+It then starts the RD discovery process again,
+picks the next available RD (this time B)
+and gets a new registration from that.
+
+RD-B then sends an update to the proxies:
+
+    Res: Patch Result
+    Add one record: </reg/11>;ep="endpoint1";d="facility23.eu.example.com";
+        con="coap://[2001:db8:23::1]";lt-age=0
+
+The proxies remove C's registration `/reg/42` based on the duplicate name
+and now answer requests like this:
+
+    Req: GET /rd-lookup/ep?ep=endpoint1&d=facility23.eu.example.com
+
+    Res: 2.05 Content
+    Payload:
+    <coap://[2001:db8:23::2]/reg/11>;ep="endpoint1";
+        d="facility23.eu.example.com";con="coap://[2001:db8:23::1]"
+
+    Req: GET /rd-lookup/res?if=core.s&d=facility23.eu.example.com
+
+    Res: 2.05 Content
+    Payload:
+    <coap://[2001:db8:23::1]/sensors/temp>;if="core.s";
+        anchor="coap://[2001:db8:23::1]/sensors/temp";
+        provenance="coap://[2001:db8:23:2]/reg/11",
+    ...
+
+### Variation: Large number of registrations, localized queries
+
+If the lookup proxies are not capable of keeping track of all the registered data,
+they can opt to forward requests to all the RDs instead.
+In this example, queries are often localized
+(queries within a building are often limited to the same building),
+so LP-Y could decide to only keep two particular observations active to each RD:
+
+* `/rd-lookup/ep?href=/*&d=facility23.eu.example.com`
+* `/rd-lookup/res?provenance=/*&d=facility23.eu.example.com`
+
+With those observed, it could still accurately respond to the above queries
+without calling out to the other RDs.
+
+If a query came in as `/rd-lookup/res?if=core.s`,
+it would still need to forward that query to all RDs to build an overview of all sensors in the network for the requester.
+
+### Variation: Combination with anycast
+
+In a variation of this, all the RDs and LPs can use a shared anycast address.
+They would be then advertised as in the anycast/NoSQL example.
+
+All RDs would need to be configured such that
+they encode their host name in their path
+(eg. `/reg/rd-c/42`).
+Nodes must then have proxy forwarding rules set up such that
+
+* `/rd` is served from the local RD if there is one,
+  or forwarded to any (the closest) RD
+
+* `/reg/*` requests are served if hosted locally, otherwise forwarded to the appropriate RD,
+  or respond with a 5.04 Gateway timeout if that is not available any more
+
+* Lookup request are served from the local lookup proxy,
+  or forwarded to the closest one on RD-only hosts.
+
+Such a setup is easier if all hosts provide both registration and lookup functionality.
 
 ## Anonymous global endpoint lookup
 
