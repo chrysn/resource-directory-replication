@@ -285,6 +285,9 @@ In this configuration, it can be tempting to run a Resource Directory
 and a lookup proxy (aimed at multiple resource directories)
 on the same host.
 
+\[ It might be easier to recommend simply using different hosts, at least host names, in those cases,
+or anything else that allows direct and not publically advertised access to the real RDs' lookups. \]
+
 In such a setup, other aggregating lookup proxies must take care
 to only select locally registered entries.
 With the current filtering rules,
@@ -311,6 +314,9 @@ crudely provides that kind of filtering.
       round-robin through choices"?
 
 * Reconsider the filtering rules, make hierarchy traversal explicit.
+
+* Allow empty submissions
+  (see global example)
 
 # Proposed RD extensions
 
@@ -620,5 +626,92 @@ Such a setup is easier if all hosts provide both registration and lookup functio
 
 ## Anonymous global endpoint lookup
 
+This scenario describes a way to provide connectivity into devices in difficult network situations
+based on identifiers of their cryptographic keys,
+the KID context identifiers of OSCORE.
+A global network of untrusted Resource Directory servers is built,
+and the individual servers provide network relaying services for endpoints that operate behind NAT or firewalls.
+
+It assumes the existance of two other hypothetical mechanisms:
+
+* The RD Parameter named "proxy".
+
+    An endpoint can ask the RD to act as a reverse proxy for it
+    by adding the `proxy` registration parameter;
+    an RD that does proxying disregards the implicit `con` parameter and announces a name of its own instead.
+
+* A URI scheme called "oscore".
+
+    A URI of the form `oscore://VGhh...2aWNl/sensor/temp` refers to
+    a resource `/sensor/temp/` on any OSCORE capable host
+    with which the client has a key established under the KID context
+    given by the base64 string in the authority component.
+
+    To resolve the URI to a concrete protocol and socket,
+    a form of
+    Resource Directory assisted protocol negotiation is used.
+
+    Use of this scheme mandates that the "host name"
+    is sent in OSCORE messages' KID context identifier field.
+
+RD servers join a global pool of servers using a protocol that is not further described here,
+but could conceivably be based on distributed hash tables (DHTs).
+
+Endpoints register only with a key derived name,
+and usually do not provide any links
+because those would be accessible only to authenticated requesters.
+
+They register at any of a set of preconfigured DNS names
+for finding a Resource Directory.
+Those names resolve to any of the currently active RD servers,
+where geographic proximity could play a role in the choice of address returned.
+
+When the endpoint discovers the registration URI
+(for which it uses coap+tcp to make later proxying more stable),
+the server returns links to its explicit IP address:
+
+    <coap+tcp://[2001:db8:1:2::3]/rd>;rt="core.rd",
+    <coap+tcp://[2001:db8:1:2::3]/rd-lookup/ep>;rt="core.rd-lookup-ep"
+
+(This avoids conflict when the DNS assignment flips
+and a different host (on which the registration resource is unknown) is returned.
+Alternatively, the servers could use a unified scheme of registration resource naming
+like `/reg/${name}` or a UUID-based scheme.)
+
+The endpoint then registers:
+
+    Req: POST coap+tcp://[2001:db8:1:2::3]/rd?proxy&ep=VGhhdCdzIHRoZSB\
+        LZXlJZENvbnRleHQgdXNlZCB3aXRoIHRoaXMgZGV2aWNl
+    Payload: empty
+
+    Res: 2.01 Created
+    Location: /reg/123
+
+When a client wants to talk to that registered server,
+its RD discovery process will yield another instance,
+which it then queries:
+
+    Req: GET coap://[2001:db8:4:5::6]/rd-lookup/ep?ep=VGhhdCdzIHRoZSBL\
+        ZXlJZENvbnRleHQgdXNlZCB3aXRoIHRoaXMgZGV2aWNl
+
+The server will look up the given ep name in the backing DHT,
+and forward the request right to the first RD server,
+which answers:
+
+    Res: 2.05 Created
+    Payload:
+    <coap+tcp://[2001:db8:1:2::3]/reg/123>;ep="VGhh...2aWNl";
+        con="coap://[2001:db8:1:2::3]"
+
+Usually when the "proxy" RD parameter is used,
+the proxy server would need to establish and announce a hostname for each endpoint it is proxying for
+in order to tell requests apart.
+This is not needed in this particualr scenario because the server can tell requests apart
+by their OSCORE KID context
+(thus the whole setup doesn't need to go through DNS again,
+though technically that would work just as well).
+
+The client will then use the discovered address to direct its OSCORE requests to,
+and the RD server will proxy for it.
 
 --- back
