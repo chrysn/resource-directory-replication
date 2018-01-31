@@ -314,7 +314,7 @@ address {
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Ams&#252;ss, C." />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-amsuess-core-resource-directory-replication-latest" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-amsuess-core-rd-replication-latest" />
   <meta name="dct.issued" scheme="ISO8601" content="2018-1-31" />
   <meta name="dct.abstract" content="Discovery of endpoints and resources in M2M applications over large networks is enabled by Resource Directories, but no special consideration has been given to how such directories can scale beyond what can be managed by a single device." />
   <meta name="description" content="Discovery of endpoints and resources in M2M applications over large networks is enabled by Resource Directories, but no special consideration has been given to how such directories can scale beyond what can be managed by a single device." />
@@ -348,7 +348,7 @@ address {
   </table>
 
   <p class="title">Resource Directory Replication<br />
-  <span class="filename">draft-amsuess-core-resource-directory-replication-latest</span></p>
+  <span class="filename">draft-amsuess-core-rd-replication-latest</span></p>
   
   <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
 <p>Discovery of endpoints and resources in M2M applications over large networks is enabled by Resource Directories, but no special consideration has been given to how such directories can scale beyond what can be managed by a single device.</p>
@@ -361,11 +361,73 @@ address {
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2018 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
-<h1 id="rfc.section.1">
+
+  
+  <hr class="noprint" />
+  <h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1>
+  <ul class="toc">
+
+  	<li>1.   <a href="#rfc.section.1">Introduction</a>
+</li>
+<li>2.   <a href="#rfc.section.2">Terminology</a>
+</li>
+<li>3.   <a href="#rfc.section.3">Goals of upscaling</a>
+</li>
+<ul><li>3.1.   <a href="#rfc.section.3.1">Large numbers of registrations</a>
+</li>
+<li>3.2.   <a href="#rfc.section.3.2">Large number of requests</a>
+</li>
+<li>3.3.   <a href="#rfc.section.3.3">Redundancy</a>
+</li>
+</ul><li>4.   <a href="#rfc.section.4">Approaches</a>
+</li>
+<ul><li>4.1.   <a href="#rfc.section.4.1">Shared authority</a>
+</li>
+<li>4.2.   <a href="#rfc.section.4.2">Plain caching</a>
+</li>
+<li>4.3.   <a href="#rfc.section.4.3">RD-aware caching</a>
+</li>
+<ul><li>4.3.1.   <a href="#rfc.section.4.3.1">Potential for improvement</a>
+</li>
+</ul><li>4.4.   <a href="#rfc.section.4.4">Distinct registration points</a>
+</li>
+<ul><li>4.4.1.   <a href="#rfc.section.4.4.1">Redundancy and handover</a>
+</li>
+<li>4.4.2.   <a href="#rfc.section.4.4.2">Loops between RDs and proxies</a>
+</li>
+</ul></ul><li>5.   <a href="#rfc.section.5">Recommendations to RD</a>
+</li>
+<li>6.   <a href="#rfc.section.6">Proposed RD extensions</a>
+</li>
+<ul><li>6.1.   <a href="#rfc.section.6.1">Provenance</a>
+</li>
+<li>6.2.   <a href="#rfc.section.6.2">Lifetime Age</a>
+</li>
+</ul><li>7.   <a href="#rfc.section.7">Example scenarios</a>
+</li>
+<ul><li>7.1.   <a href="#rfc.section.7.1">Redundant and replicated resource lookup (anycast)</a>
+</li>
+<li>7.2.   <a href="#rfc.section.7.2">Redundant and replicated resource lookup (distinct registration points)</a>
+</li>
+<ul><li>7.2.1.   <a href="#rfc.section.7.2.1">Variation: Large number of registrations, localized queries</a>
+</li>
+<li>7.2.2.   <a href="#rfc.section.7.2.2">Variation: Combination with anycast</a>
+</li>
+</ul><li>7.3.   <a href="#rfc.section.7.3">Anonymous global endpoint lookup</a>
+</li>
+</ul><li>8.   <a href="#rfc.references">Informative References</a>
+</li>
+<li><a href="#rfc.authors">Author's Address</a>
+</li>
+
+
+  </ul>
+
+  <h1 id="rfc.section.1">
 <a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a>
 </h1>
 <p id="rfc.section.1.p.1">[ See abstract for now. ]</p>
-<p id="rfc.section.1.p.2">This document is being developed in a git based workflow.  Please see https://github.com/chrysn/resource-directory-replication for more details and easy ways to contribute.</p>
+<p id="rfc.section.1.p.2">This document is being developed in a git based workflow.  Please see <a href="https://github.com/chrysn/resource-directory-replication">https://github.com/chrysn/resource-directory-replication</a> for more details and easy ways to contribute.</p>
 <h1 id="rfc.section.2">
 <a href="#rfc.section.2">2.</a> <a href="#terminology" id="terminology">Terminology</a>
 </h1>
@@ -802,68 +864,6 @@ Payload:
 
   </address>
 </div>
-  
-  <hr class="noprint" />
-  <h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1>
-  <ul class="toc">
-
-  	<li>1.   <a href="#rfc.section.1">Introduction</a>
-</li>
-<li>2.   <a href="#rfc.section.2">Terminology</a>
-</li>
-<li>3.   <a href="#rfc.section.3">Goals of upscaling</a>
-</li>
-<ul><li>3.1.   <a href="#rfc.section.3.1">Large numbers of registrations</a>
-</li>
-<li>3.2.   <a href="#rfc.section.3.2">Large number of requests</a>
-</li>
-<li>3.3.   <a href="#rfc.section.3.3">Redundancy</a>
-</li>
-</ul><li>4.   <a href="#rfc.section.4">Approaches</a>
-</li>
-<ul><li>4.1.   <a href="#rfc.section.4.1">Shared authority</a>
-</li>
-<li>4.2.   <a href="#rfc.section.4.2">Plain caching</a>
-</li>
-<li>4.3.   <a href="#rfc.section.4.3">RD-aware caching</a>
-</li>
-<ul><li>4.3.1.   <a href="#rfc.section.4.3.1">Potential for improvement</a>
-</li>
-</ul><li>4.4.   <a href="#rfc.section.4.4">Distinct registration points</a>
-</li>
-<ul><li>4.4.1.   <a href="#rfc.section.4.4.1">Redundancy and handover</a>
-</li>
-<li>4.4.2.   <a href="#rfc.section.4.4.2">Loops between RDs and proxies</a>
-</li>
-</ul></ul><li>5.   <a href="#rfc.section.5">Recommendations to RD</a>
-</li>
-<li>6.   <a href="#rfc.section.6">Proposed RD extensions</a>
-</li>
-<ul><li>6.1.   <a href="#rfc.section.6.1">Provenance</a>
-</li>
-<li>6.2.   <a href="#rfc.section.6.2">Lifetime Age</a>
-</li>
-</ul><li>7.   <a href="#rfc.section.7">Example scenarios</a>
-</li>
-<ul><li>7.1.   <a href="#rfc.section.7.1">Redundant and replicated resource lookup (anycast)</a>
-</li>
-<li>7.2.   <a href="#rfc.section.7.2">Redundant and replicated resource lookup (distinct registration points)</a>
-</li>
-<ul><li>7.2.1.   <a href="#rfc.section.7.2.1">Variation: Large number of registrations, localized queries</a>
-</li>
-<li>7.2.2.   <a href="#rfc.section.7.2.2">Variation: Combination with anycast</a>
-</li>
-</ul><li>7.3.   <a href="#rfc.section.7.3">Anonymous global endpoint lookup</a>
-</li>
-</ul><li>8.   <a href="#rfc.references">Informative References</a>
-</li>
-<li><a href="#rfc.authors">Author's Address</a>
-</li>
-
-
-  </ul>
-
-  
 
 </body>
 </html>
