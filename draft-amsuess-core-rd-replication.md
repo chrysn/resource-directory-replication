@@ -12,6 +12,7 @@ pi:
   comments: yes
   subcompact: 'no'
   iprnotified: 'no'
+  toc: 'yes'
 area: Internet
 wg: CoRE
 kw: CoRE, Web Linking, Resource Directory, Federation, Replication
@@ -42,7 +43,7 @@ groundwork for later documents.
 \[ See abstract for now. \]
 
 This document is being developed in a git based workflow.
-Please see https://github.com/chrysn/resource-directory-replication
+Please see <https://github.com/chrysn/resource-directory-replication>
 for more details and easy ways to contribute.
 
 # Terminology
