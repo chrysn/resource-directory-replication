@@ -286,23 +286,36 @@ address {
 <link href="#rfc.section.2" rel="Chapter" title="2 Terminology">
 <link href="#rfc.section.3" rel="Chapter" title="3 Goals of upscaling">
 <link href="#rfc.section.3.1" rel="Chapter" title="3.1 Large numbers of registrations">
-<link href="#rfc.section.3.2" rel="Chapter" title="3.2 Large amounts of requests">
+<link href="#rfc.section.3.2" rel="Chapter" title="3.2 Large number of requests">
 <link href="#rfc.section.3.3" rel="Chapter" title="3.3 Redundancy">
 <link href="#rfc.section.4" rel="Chapter" title="4 Approaches">
-<link href="#rfc.section.4.1" rel="Chapter" title="4.1 Shared authority / anycast">
+<link href="#rfc.section.4.1" rel="Chapter" title="4.1 Shared authority">
 <link href="#rfc.section.4.2" rel="Chapter" title="4.2 Plain caching">
 <link href="#rfc.section.4.3" rel="Chapter" title="4.3 RD-aware caching">
-<link href="#rfc.section.4.4" rel="Chapter" title="4.4 Distinct entry points">
-<link href="#rfc.references" rel="Chapter" title="5 Informative References">
+<link href="#rfc.section.4.3.1" rel="Chapter" title="4.3.1 Potential for improvement">
+<link href="#rfc.section.4.4" rel="Chapter" title="4.4 Distinct registration points">
+<link href="#rfc.section.4.4.1" rel="Chapter" title="4.4.1 Redundancy and handover">
+<link href="#rfc.section.4.4.2" rel="Chapter" title="4.4.2 Loops between RDs and proxies">
+<link href="#rfc.section.5" rel="Chapter" title="5 Recommendations to RD">
+<link href="#rfc.section.6" rel="Chapter" title="6 Proposed RD extensions">
+<link href="#rfc.section.6.1" rel="Chapter" title="6.1 Provenance">
+<link href="#rfc.section.6.2" rel="Chapter" title="6.2 Lifetime Age">
+<link href="#rfc.section.7" rel="Chapter" title="7 Example scenarios">
+<link href="#rfc.section.7.1" rel="Chapter" title="7.1 Redundant and replicated resource lookup (anycast)">
+<link href="#rfc.section.7.2" rel="Chapter" title="7.2 Redundant and replicated resource lookup (distinct registration points)">
+<link href="#rfc.section.7.2.1" rel="Chapter" title="7.2.1 Variation: Large number of registrations, localized queries">
+<link href="#rfc.section.7.2.2" rel="Chapter" title="7.2.2 Variation: Combination with anycast">
+<link href="#rfc.section.7.3" rel="Chapter" title="7.3 Anonymous global endpoint lookup">
+<link href="#rfc.references" rel="Chapter" title="8 Informative References">
 <link href="#rfc.authors" rel="Chapter">
 
 
-  <meta name="generator" content="xml2rfc version 2.8.3 - https://tools.ietf.org/tools/xml2rfc" />
+  <meta name="generator" content="xml2rfc version 2.8.5 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Ams&#252;ss, C." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-amsuess-core-resource-directory-replication-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2018-1-26" />
+  <meta name="dct.issued" scheme="ISO8601" content="2018-1-31" />
   <meta name="dct.abstract" content="Discovery of endpoints and resources in M2M applications over large networks is enabled by Resource Directories, but no special consideration has been given to how such directories can scale beyond what can be managed by a single device." />
   <meta name="description" content="Discovery of endpoints and resources in M2M applications over large networks is enabled by Resource Directories, but no special consideration has been given to how such directories can scale beyond what can be managed by a single device." />
 
@@ -319,14 +332,14 @@ address {
 </tr>
 <tr>
 <td class="left">Internet-Draft</td>
-<td class="right">January 26, 2018</td>
+<td class="right">January 31, 2018</td>
 </tr>
 <tr>
 <td class="left">Intended status: Informational</td>
 <td class="right"></td>
 </tr>
 <tr>
-<td class="left">Expires: July 30, 2018</td>
+<td class="left">Expires: August 4, 2018</td>
 <td class="right"></td>
 </tr>
 
@@ -344,7 +357,7 @@ address {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on July 30, 2018.</p>
+<p>This Internet-Draft will expire on August 4, 2018.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2018 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -357,6 +370,7 @@ address {
 </h1>
 <p id="rfc.section.2.p.1">@@@</p>
 <p id="rfc.section.2.p.2">Origin Server from <a href="#RFC7252" class="xref">[RFC7252]</a></p>
+<p id="rfc.section.2.p.3">Examples in which URI paths like <samp>/rd</samp> or <samp>/rd-lookup/res</samp> are used assume that those URIs have been obtained before by an RD Discovery process; these paths are only examples, and no implementation should make assumptions based on the literal paths.</p>
 <h1 id="rfc.section.3">
 <a href="#rfc.section.3">3.</a> <a href="#goals-of-upscaling" id="goals-of-upscaling">Goals of upscaling</a>
 </h1>
@@ -365,10 +379,10 @@ address {
 <a href="#rfc.section.3.1">3.1.</a> <a href="#large-numbers-of-registrations" id="large-numbers-of-registrations">Large numbers of registrations</a>
 </h1>
 <p id="rfc.section.3.1.p.1">Even at 1kB of link data per registration, modern server hardware can easily keep the data of millions of registrations in RAM simultaneously.  Thus, the mere size of registration data is not expected to be a factor that requires scaling to multiple nodes.</p>
-<p id="rfc.section.3.1.p.2">The traffic produced when millions of nodes with the default 24h lifetime amounts to tens of exchanges per second, which is doable with equal ease at central network equipment.</p>
+<p id="rfc.section.3.1.p.2">The traffic produced when millions of nodes with the default 24h lifetime amounts to dozens of exchanges per second, which is doable with equal ease at central network equipment.</p>
 <p id="rfc.section.3.1.p.3">However, if the directory has additional interaction with its registered nodes, for example because it provides proxying to registered endpoints, resources like file descriptors can be exhausted earlier, and the traffic load on the registration server grows with the traffic it is proxying for the endpoint.</p>
 <h1 id="rfc.section.3.2">
-<a href="#rfc.section.3.2">3.2.</a> <a href="#large-amounts-of-requests" id="large-amounts-of-requests">Large amounts of requests</a>
+<a href="#rfc.section.3.2">3.2.</a> <a href="#large-number-of-requests" id="large-number-of-requests">Large number of requests</a>
 </h1>
 <p id="rfc.section.3.2.p.1">Not all approaches to constrained restful communication use the Resource Directory only in the setup stage; some are might also utilize a Resource Directory in more day-to-day operation.</p>
 <p id="rfc.section.3.2.p.2">@@@ get some numbers on how many requests a single RD can deal with</p>
@@ -380,36 +394,382 @@ address {
 <h1 id="rfc.section.4">
 <a href="#rfc.section.4">4.</a> <a href="#approaches" id="approaches">Approaches</a>
 </h1>
+<p id="rfc.section.4.p.1">In this section, two independent chains of approaches are presented.  The &#8220;shared authority&#8221; approach (using anycast or DNS aliases), and proxy-based caching (in stages from using generic proxies to RD replication that only bears little resemblance to proxies).</p>
+<p id="rfc.section.4.p.2">Elements from those chains can be mixed.</p>
 <h1 id="rfc.section.4.1">
-<a href="#rfc.section.4.1">4.1.</a> <a href="#shared-authority-anycast" id="shared-authority-anycast">Shared authority / anycast</a>
+<a href="#rfc.section.4.1">4.1.</a> <a href="#shared-authority" id="shared-authority">Shared authority</a>
 </h1>
-<p id="rfc.section.4.1.p.1">When used with the CoAP protocol over UDP or DTLS, a Resource Directory can be served from an anycast addresses, which is reflected in the authority component of all RD resources. From the clients&#8217; point of view, all interaction happens from the same Origin Server.</p>
-<p id="rfc.section.4.1.p.2">In this setup, the replication is hidden from the REST interactions, and takes place inside the RD server implementation or its database backend.</p>
-<p id="rfc.section.4.1.p.3">@@@ delegation to replication under the RD</p>
+<p id="rfc.section.4.1.p.1">With this approach, a single host and port (or &#8220;authority&#8221; component in the generic URI syntax) is used for all interactions with the RD.</p>
+<p id="rfc.section.4.1.p.2">This can be implemented using a host name pointing to different IP addresses simultaneously or depending on the requester&#8217;s location, using IP anycast addresses or both.</p>
+<p id="rfc.section.4.1.p.3">From the client&#8217;s or proxy&#8217;s point of view, all interaction happens with same Origin Server.</p>
+<p id="rfc.section.4.1.p.4">In this setup, the replication is hidden from the REST interactions, and takes place inside the RD server implementation or its database backend.</p>
+<p id="rfc.section.4.1.p.5">Compared to the other approaches, this is more complex to set up when it involves managing anycast addresses: Running an IPv4 anycast network on Internet scale requires running an Autonomous System.  In either variation, all server instances are tightly coupled; they need shared administration and probably need to run the same software.</p>
+<p id="rfc.section.4.1.p.6">The replication characteristics are laregly inherited from the underlying backend.</p>
+<p id="rfc.section.4.1.p.7">As registering endpoints only store the URI constructed from the Location-Path option to their registration request, registration updates can end up at any instance of the server, though they are likely to reach the same one as before most of the time.</p>
+<p id="rfc.section.4.1.p.8">Spontaneous failure of individual nodes can interrupt endpoints&#8217; registrations in scenarious that do not use anycast addresses until the unusable addresses have left DNS caches.</p>
 <h1 id="rfc.section.4.2">
 <a href="#rfc.section.4.2">4.2.</a> <a href="#plain-caching" id="plain-caching">Plain caching</a>
 </h1>
+<p id="rfc.section.4.2.p.1">Caching reverse proxies that are not particularly aware of a Resource Directory can be used to mitigate the effect of large numbers of requests on a single RD server.  In this approach, there exists a single central RD server instance, but proxies are placed in front of it to reduce its load.</p>
+<p id="rfc.section.4.2.p.2">Caching is applicable only to the lookup interfaces; the POST request used in registration and renewal are not cacheable.</p>
+<p id="rfc.section.4.2.p.3">A prerequisite for successful caching is that fresh copies exist in the cache; this is likely to happen only if there are many alike requests to the Resource Directory.  The proxy can than serve cached copies, and might find it advantageous to observe frequent queries.</p>
+<p id="rfc.section.4.2.p.4">The simplest way to set up such proxying is to have the proxies forward all requests to the central RD and to advertise only the proxies&#8217; addresses.</p>
+<p id="rfc.section.4.2.p.5">Due to the discovery process of the RD, operators can also limit the proxies to the lookup interfaces and advertise the central server for registration purposes.  A sample exchange between a node and its 6LoWPAN border router could be:</p>
+<pre>
+Req: GET coap://[fe80::1]/.well-known/core?rt=core.rd*
+
+Res: 2.05 Content
+&lt;coap://central-rd.example.com/rd&gt;;rt="core.rd",
+&lt;coap://europe3.proxy.rd.example.com/rd-lookup/res&gt;;rt="core.rd-lookup-res",
+&lt;coap://europe3.proxy.rd.example.com/rd-lookup/ep&gt;;rt="core.rd-lookup-ep"
+</pre>
+<p id="rfc.section.4.2.p.6">Special care should be taken when a reverse proxy is not accessed by the client under the same address as the origin server, as relative references change their meaning when served from there.  This can be ignored completely on the resource lookup interface (as long as the provenance extension is not used); ignoring it on the endpoint lookup interface gives the client &#8220;wrong&#8221; results, though that is likely to only matter to applications that use both the lookup and the registration interface, like Commissioning Tools could do.  Proxies can be configured to do content transcoding (cf. <a href="#RFC8075" class="xref">[RFC8075]</a> Section 6.5.2) to preserve the lookup responses&#8217; original meanings.</p>
+<p id="rfc.section.4.2.p.7">This approach does not help at all with large numbers of registrations.  It can mitigate issues with large numbers of lookup requests, provided that many identical requests arrive at the proxy.  The effect on the redundancy goal is negligible: The proxy can provide lookup results only for as long as the cache is fresh during a central server outage, which is 60 seconds unless the RD server says otherwise.</p>
+<p id="rfc.section.4.2.p.8">This approach can be run with off-the-shelf RD servers and proxies.  The only configuration required is for the proxy to have a forwarding address, and for the RD (or its announcer) tho know which lookup addresses to advertise.</p>
 <h1 id="rfc.section.4.3">
 <a href="#rfc.section.4.3">4.3.</a> <a href="#rd-aware-caching" id="rd-aware-caching">RD-aware caching</a>
 </h1>
-<h1 id="rfc.section.4.4">
-<a href="#rfc.section.4.4">4.4.</a> <a href="#distinct-entry-points" id="distinct-entry-points">Distinct entry points</a>
+<p id="rfc.section.4.3.p.1">Similar to the above, specialized proxies can be employed that are aware that their target is an RD lookup address.</p>
+<p id="rfc.section.4.3.p.2">The &#8220;plain caching&#8221; approach is limited in that it requires a small set of lookups to be frequently performed.  A proxy that is aware that the address it is forwarding to is of the Resource Type &#8220;core.rd-lookup-*&#8221; can utilize knowledge of how an RD works to serve more specialized requests as well from fresh generic content.</p>
+<p id="rfc.section.4.3.p.3">For example, assume that the proxy frequently receives requests of the shape</p>
+<pre>
+Req: GET /rd-lookup/res?rt=core.s&amp;rt=ex.temperature&amp;ex.building=8341&amp;title=X
+</pre>
+<p id="rfc.section.4.3.p.4">for arbitrary values of X. Then it can use the following request to keep a fresh cache:</p>
+<pre>
+Req: GET coap://rd.example.com/rd-lookup/res?rt=core.s&amp;rt=ex.temperature&amp;ex.building=8341
+Observe: 1
+</pre>
+<p id="rfc.section.4.3.p.5">and from that serve filtered responses to individual requests.</p>
+<p id="rfc.section.4.3.p.6">This method shares the advantages of plain caching, with reduced limitations but requiring specialized proxying software.  The software does not necessarily need more configuration: A general-purpose proxy is free to explore the origin server&#8217;s <samp>.well-known/core</samp> information, and can decide to enable RD optimizations after discovering that the frequently accesses resources are of resource type &#8220;core.rd-lookup-*&#8221;.</p>
+<h1 id="rfc.section.4.3.1">
+<a href="#rfc.section.4.3.1">4.3.1.</a> <a href="#potential-for-improvement" id="potential-for-improvement">Potential for improvement</a>
 </h1>
-<p id="rfc.section.4.4.p.1">@@@ registration and handover</p>
-<p id="rfc.section.4.4.p.2">@@@ replication of contents vs forwarding of requests</p>
-<p id="rfc.section.4.4.p.3">@@@ using foreign registration URIs</p>
+<p id="rfc.section.4.3.1.p.1">Observing a large lookup result is relatively inefficient as the complete document needs to be transferred when a change happens.  Serializations of web links that are suitable for expressing small deltas are expected to be developed for PATCH operations on registration resources.  If those formats are compatible with observation, they can be applied directly.  Otherwise, the proxy can try to establish a &#8220;push&#8221; dynamic link (<a href="#I-D.ietf-core-dynlink" class="xref">[I-D.ietf-core-dynlink]</a>) to receive continuous PATCH updates on its resource.</p>
+<p id="rfc.section.4.3.1.p.2">The applicability of the RD-aware approach is further limited to query parameters of which the proxy knows that they are not subject to lookup filtering on other entities than the queried one.  In the example above, were the variable part the <samp>d</samp> attribute (of endpoints, as opposed to the <samp>title</samp> of resources), the proxy could not do the filtering on its own becaus it would not have the required information.  Even the above example does not allow for fully accurate replication, as the endpoint <em>might</em> register with a <samp>title</samp> endpoint attribute, even though no such attribute is specified right now.  It might be worth considering to be more explicit about filtering &#8220;up&#8221; and &#8220;down&#8221; in the hiearchy in the RD specification.  Also, annotating the links in the endpoint lookup with information about which registration they belong to would help the proxy keep all the data around to solve more complex queries.  The provenance extension is proposed for that purpose.</p>
+<p id="rfc.section.4.3.1.p.3">In its extreme form, the proxy can observe the complete lookup resources of the Resource Directory.  It can then answer all queries on its own based on the continuously fresh state transferred in the observations.  That form requires the RD to support the provenance extension.</p>
+<p id="rfc.section.4.3.1.p.4">For such proxies, it can be suitable to configure them to use stale cache values for extended periods of time when the RD becomes intermittently unavailable.</p>
+<h1 id="rfc.section.4.4">
+<a href="#rfc.section.4.4">4.4.</a> <a href="#distinct-registration-points" id="distinct-registration-points">Distinct registration points</a>
+</h1>
+<p id="rfc.section.4.4.p.1">Caching proxies that are aware of RD semantics could be extended to gather information from more than one Resource Directory.</p>
+<p id="rfc.section.4.4.p.2">When executing queries, they would consider candidates from all configured upstream servers and report the union of the respective query results.  At this stage, it is highly recommended that content transcoding takes place.</p>
+<p id="rfc.section.4.4.p.3">With this approach, many distinct registration URIs can be advertised, for example due to geographic proximity.</p>
+<p id="rfc.section.4.4.p.4">Unlike the other proxying approaches, this helps with the &#8220;large number of registrations&#8221; goal.  If that number is unmanageable for single devices, proxies need not keep full copies of all the RDs&#8217; states but rather send out queries to all of their upstreams, behaving more like the &#8220;plain caching&#8221; proxies.  This multiplies the lookup traffic, but allows for huge numbers of registrations.  The problems of &#8220;too many lookups&#8221; versus &#8220;too many registrations&#8221; can be traded off against each other if the proxies keep parts of the RDs&#8217; states locally at hand while forwarding more exotic requests to all RDs.</p>
+<h1 id="rfc.section.4.4.1">
+<a href="#rfc.section.4.4.1">4.4.1.</a> <a href="#redundancy-and-handover" id="redundancy-and-handover">Redundancy and handover</a>
+</h1>
+<p id="rfc.section.4.4.1.p.1">This approach also tackles the redundancy goal.  When an endpoint registeres at its RD, the RD updates its endpoint and resource lookup results and includes the registration data until further notice (for correct operation, the &#8220;Lifetime Age&#8221; extension is useful).</p>
+<p id="rfc.section.4.4.1.p.2">If at some point in time that RD server becomes unavailable, the proxies can keep the cached information around.  Before the lifetime expires, the endpoint will attempt to renew its registration and find that the RD is unavailable.  It will then go through discovery again, find the most recently advertised registration URI or pick another one out of a set (see seciton on Recommendations) and start a new registration there.</p>
+<p id="rfc.section.4.4.1.p.3">If the lookup proxies do not evict the old (and soon-to-time-out) registration when the new one on a different RD with the same endpoint name and domain arrives, at worst there will be the same information twice from two registration resources available for lookup.</p>
+<h1 id="rfc.section.4.4.2">
+<a href="#rfc.section.4.4.2">4.4.2.</a> <a href="#loops-between-rds-and-proxies" id="loops-between-rds-and-proxies">Loops between RDs and proxies</a>
+</h1>
+<p id="rfc.section.4.4.2.p.1">In this configuration, it can be tempting to run a Resource Directory and a lookup proxy (aimed at multiple resource directories) on the same host.</p>
+<p id="rfc.section.4.4.2.p.2">[ It might be easier to recommend simply using different hosts, at least host names, in those cases, or anything else that allows direct and not publically advertised access to the real RDs&#8217; lookups. ]</p>
+<p id="rfc.section.4.4.2.p.3">In such a setup, other aggregating lookup proxies must take care to only select locally registered entries.  With the current filtering rules, observing the resources <samp>/rd-lookup/ep?href=/*</samp> and <samp>/rd-lookup/res?provenance=/*</samp> crudely provides that kind of filtering.</p>
+<h1 id="rfc.section.5">
+<a href="#rfc.section.5">5.</a> <a href="#recommendations-to-rd" id="recommendations-to-rd">Recommendations to RD</a>
+</h1>
+<p></p>
+
+<ul>
+<li>Explicitly allow &#8220;foreign&#8221; URIs in discovery and endpoint lookup  <ul>
+<li>This is already being done for group memberships.</li>
+<li>This doesn&#8217;t change a thing about there not being a <samp>Location-Host</samp> &#8211; the registration is still with the server the registration was sent to.</li>
+</ul>
+</li>
+<li>Say something about what to do on registration or renewal failure: When should discovery be restarted?  <ul><li>&#8220;Retry when Max-Age is reached on 5.03 up to N times, and then (or on other errors) restart discovery and round-robin through choices&#8221;?</li></ul>
+</li>
+<li>Reconsider the filtering rules, make hierarchy traversal explicit.</li>
+<li>Allow empty submissions (see global example)</li>
+</ul>
+<h1 id="rfc.section.6">
+<a href="#rfc.section.6">6.</a> <a href="#proposed-rd-extensions" id="proposed-rd-extensions">Proposed RD extensions</a>
+</h1>
+<h1 id="rfc.section.6.1">
+<a href="#rfc.section.6.1">6.1.</a> <a href="#provenance" id="provenance">Provenance</a>
+</h1>
+<p id="rfc.section.6.1.p.1">In order for an RD-aware proxy to serve resource lookup requests that filter on endpoint parameters, the proxy needs a way to tell which endpoint registration submitted that link.  That information might also be useful for other purposes.</p>
+<p id="rfc.section.6.1.p.2">This introduces a new link attribute &#8220;provenance&#8221;.  Its value is a URI reference as described by <a href="#RFC3986" class="xref">[RFC3986]</a> Section 4.1.  The URI is to be interpreted by the same rules that apply to the &#8220;anchor&#8221; attribute, namely by resolving the reference relative to the requested document&#8217;s URI.  The attribute should not be repeated, and in presence of multiple attributes, only the last should be considered.</p>
+<p id="rfc.section.6.1.p.3">[ TODO: If a something link-format-ish comes up during the development of this document which allows setting base-hrefs in-line, evaluate whether it really makes sense to inherit anchor&#8217;s rules or whether it&#8217;s better to phrase it in a way that the requested base URI always counts. ]</p>
+<p id="rfc.section.6.1.p.4">The URI given in the &#8220;provenance&#8221; attribute describes where the information in the link was obtained from.  An aggregator of links can thus declare its sources for each link.</p>
+<p id="rfc.section.6.1.p.5">It is recommended that a Resource Directory adds the URI of the registration resource to resource lookups. Thus, if an endpoint registers as</p>
+<pre>
+Req: POST /rd?ep=node1
+Payload:
+&lt;/sensors/temp&gt;;if="core.s"
+
+Res: 2.01 Created
+Location: /reg/1234
+</pre>
+<p id="rfc.section.6.1.p.6">then a lookup will add a provenance attribute:</p>
+<pre>
+Req: GET /rd-lookup/res?if=core.s
+
+Res: 2.05 Content
+Payload:
+&lt;coap://.../sensors/temp&gt;;if="core.s";anchor="coap://...";provenance="/reg/1234"
+</pre>
+<p id="rfc.section.6.1.p.7">This is not an IANA consideration as there is no established registry of link attributes.</p>
+<p id="rfc.section.6.1.p.8">By itself, the provenance attribute does not need to be registered in the RD Parameters Registry because it is just another link attribute.  If it is desired that provenance information is only shown on request (eg. by RD-aware proxies), a parameter can be introduced there:</p>
+<p></p>
+
+<ul>
+<li>Full name: Link provenance</li>
+<li>short: provenance</li>
+<li>Validity: URI</li>
+<li>Use: Resource lookup only</li>
+<li>Description: If <samp>provenance</samp> or any string starting with <samp>provenance=</samp> is given as one of the ampersand-delimited query arguments, the RD is instructed to add the provenance attribute to all looked up links; otherwise, the RD will not present them.  The filtering rules still apply: If there is a <samp>=</samp> sign in the query argument, only links with matching provenance will be reported.</li>
+</ul>
+<h1 id="rfc.section.6.2">
+<a href="#rfc.section.6.2">6.2.</a> <a href="#lifetime-age" id="lifetime-age">Lifetime Age</a>
+</h1>
+<p id="rfc.section.6.2.p.1">The result of an endpoint lookup as a whole has inhomogenous cache properties that would determine its Max-Age:</p>
+<p></p>
+
+<ul>
+<li>The document can change at any time when a new endpoint registers.</li>
+<li>The document can change at any time when an endpoint deregisters.</li>
+<li>Each record can be expected to not change until its lifetime has expired.</li>
+</ul>
+<p id="rfc.section.6.2.p.3">As currently specified, a lookup client has no way to tell where in its lifetime an endpoint is.  Therefore, a new link attribute is suggested that allows the RD to share that information:</p>
+<p id="rfc.section.6.2.p.4">The new link attribute Lifetime Age (lt-age) is described for use in RD Endpoint Lookups.  Valid values are integers from 0 to the lifetime of the registration.  The value indicates how many seconds have passed since the endpoint last renewed its registration.</p>
+<p id="rfc.section.6.2.p.5">Care has to be taken when replicating this value in caches, as the caching agent might be unaware of the attribute&#8217;s semantics and not update it.  (This is unlike the Max-Age attribute, which a caching agent needs to understand and reduce accordingly when serving from the cache).  It should therefore only be used with responses that carry the default Max-Age of 60 or less.</p>
+<p id="rfc.section.6.2.p.6">Clients that use the lookup interface (especially RD-aware proxies) are free to treat that record and its corresponding resource records as fresh until after the difference of lt and lt-age seconds have passed since the endpoint lookup result was obtained, especially if the origin server has become unavailable.</p>
+<p id="rfc.section.6.2.p.7">Security considerations: Given that this leaks information about the endpoint&#8217;s communication patterns, it may be prudent for an RD only to reveal this information on a need-to-know basis.</p>
+<h1 id="rfc.section.7">
+<a href="#rfc.section.7">7.</a> <a href="#example-scenarios" id="example-scenarios">Example scenarios</a>
+</h1>
+<h1 id="rfc.section.7.1">
+<a href="#rfc.section.7.1">7.1.</a> <a href="#redundant-and-replicated-resource-lookup-anycast" id="redundant-and-replicated-resource-lookup-anycast">Redundant and replicated resource lookup (anycast)</a>
+</h1>
+<p id="rfc.section.7.1.p.1">This scenario describes a setup where millions of devices register in a company-wide Resource Directory.</p>
+<p id="rfc.section.7.1.p.2">The directory is scaled using the shared authority / anycast approach, and the RD implementation is backed by a NoSQL-style distributed database.</p>
+<pre>
+        /'''''''\______/'''''\__/''''''''\
+     /-                                   -\
+     |,           NoSQL database           |
+       \,,,                           ,~''
+           \_____/'''\__________/''''   \
+        /             |                  \
+  /''''''\        /''''''\                 /''''''\
+  | RD-A |        | RD-B |                 | RD-C |
+  \______/        \______/                 \______/
+ /  |  | \        / | | | \                  | | |
+E   E  C  E       E E E E C                  C C C
+</pre>
+<p id="rfc.section.7.1.p.3">(<samp>E</samp> and <samp>C</samp> represent endpoints and lookup clients, respectively)</p>
+<p id="rfc.section.7.1.p.4">Both endloints and lookup clients receive the RD address <samp>2001:db8::an1:ca57</samp> is announced to all devices on the network using the RDAO option in IPv6 Neighbor Discovery.  Any packages to that addresses are routed by the network to the closest of the three RD instances A, B and C.  Discovery invariably looks like this:</p>
+<pre>
+Req: GET coap://[2001:db8::an1:ca57/.well-known/core?rt=core.rd*
+
+Res: 2.05 Content
+&lt;/rd&gt;;rt="core.rd",
+&lt;/rd-lookup/res&gt;;rt="core.rd-lookup-res",
+&lt;/rd-lookup/ep&gt;;rt="core.rd-lookup-ep"
+</pre>
+<p id="rfc.section.7.1.p.5">An endpoint close to B would therefore register with</p>
+<pre>
+Req: POST coap://[2001:db8::an1:ca57]/rd?ep=endpoint1&amp;d=facility23.eu.example.com
+Payload:
+&lt;/sensors/temp&gt;;if="core.s"
+
+Res: 2.01 Created
+Location: /reg/123e4567-e89b-12d3-a456-426655440000
+</pre>
+<p id="rfc.section.7.1.p.6">Any client could immediately see that the endpoint is registered by issuing</p>
+<pre>
+Req: GET coap://[2001:db8::an1:ca57]/rd-lookup/ep?ep=endpoint1&amp;d=facility23.eu.example.com
+
+Res: 2.05 Content
+Payload:
+&lt;/reg/123e4567-e89b-12d3-a456-426655440000&gt;;ep="endpoint1";
+    d="facility23.eu.example.com";con="coap://[2001:db8:23::1]"
+</pre>
+<p id="rfc.section.7.1.p.7">If at any point in time the RD instance B becomes unavailable, the registering endpoint&#8217;s renewal requests will be routed to the next available instance, for example A.  That instance can update the shared database with renewed lifetime just as B would have done.</p>
+<p id="rfc.section.7.1.p.8">How this performs under a net split depends on the database backend.  Registration resources based on UUIDs were chosen in this example because those would allow the system to keep accepting new registrations even in a netsplit situation; the risk of the registration request not being idempotent towards a node that switches sides during such a split is considered acceptable.</p>
+<h1 id="rfc.section.7.2">
+<a href="#rfc.section.7.2">7.2.</a> <a href="#redundant-and-replicated-resource-lookup-distinct-registration-points" id="redundant-and-replicated-resource-lookup-distinct-registration-points">Redundant and replicated resource lookup (distinct registration points)</a>
+</h1>
+<p id="rfc.section.7.2.p.1">This scenario takes place in the same environment as the previous one.</p>
+<p id="rfc.section.7.2.p.2">Rather than a shared database, distinct registration points are advertised.  The advertised registration points are called RD-A to RD-C; independent of them are lookup proxies LP-X to LP-Z.  Some of them run on the same hosts.</p>
+<pre>
+        /'''''''\______/'''''\__/''''''''\
+     /-                                   -\
+     |,                                    |
+       \,,,                           ,~''
+           \_____/'''\__________/''''   \
+            |               |            \
+  /''''''\  |     /''''''\  |  /''''''\   |  /''''''\
+  | RD-A |--+     | RD-B |--+--| RD-C |   +--| LP-Z |
+  | LP-X |  |     | LP-Y |  |  |      |   |  |      |
+  \_____1/  |     \_____2/  |  \____3/    |  \_____4/
+            |               |             |
+      +--+--+            +--+--+          +--+
+      E  E  C            E  E  E          C  C
+</pre>
+<p id="rfc.section.7.2.p.3">The lookup proxies in this scenario are constantly observing the <samp>/rd-lookup/ep?href=/*</samp> and <samp>/rd-lookup/res?provenance=/*</samp> resources of known RDs on other hosts, and might get updated internally with state from a co-hosted RD or observe that using an internal interface.  As there is really suitable content format and observation mechanism for those yet, the exchanges are partially described in words here.</p>
+<p id="rfc.section.7.2.p.4">RDAO announcements point to the nearest host (whose IP address ends with the numbers of the respective box in the figure), and hosts that do not serve both functions provide lookup as follows:</p>
+<pre>
+Req: GET coap://[2001:db8:23::3]/.well-known/core?rt=core.rd*
+
+Res: 2.05 Content
+Payload:
+&lt;/rd&gt;;rt="core.rd",
+&lt;coap://[2001:db8:23::2]/rd-lookup/ep&gt;;rt="core.rd-lookup-ep",
+&lt;coap://[2001:db8:23::2]/rd-lookup/res&gt;;rt="core.rd-lookup-res"
+</pre>
+<p id="rfc.section.7.2.p.5">When a client then registers as</p>
+<pre>
+Req: POST coap://[2001:db8:23::3]/rd?ep=endpoint1&amp;d=facility23.eu.example.com
+Payload:
+&lt;/sensors/temp&gt;;if="core.s"
+
+Res: 2.01 Created
+Location: /reg/42
+</pre>
+<p id="rfc.section.7.2.p.6">the RD at 3 sends notifications to the observing lookup proxies X, Y and Z:</p>
+<pre>
+Res: Patch Result
+Add one record: &lt;/reg/42&gt;;ep="endpoint1";d="facility23.eu.example.com";
+    con="coap://[2001:db8:23::1]";lt-age=0
+</pre>
+<p id="rfc.section.7.2.p.7">As soon as that is processed, clients can query LP-Z</p>
+<pre>
+Req: GET coap://[2001:db8:4::4]/rd-lookup/ep?ep=endpoint1&amp;d=facility23.eu.example.com
+
+Res: 2.05 Content
+Payload:
+&lt;coap://[2001:db8:23::3]/reg/42&gt;;ep="endpoint1";
+    d="facility23.eu.example.com";con="coap://[2001:db8:23::1]"
+</pre>
+<p id="rfc.section.7.2.p.8">(Note that lt-age is elided to the client as per the security considerations for that information).</p>
+<p id="rfc.section.7.2.p.9">When a net split happens that cuts LP-Z&#8217;s site off the rest, it keeps that information available until the lt-age runs out.</p>
+<p id="rfc.section.7.2.p.10">When RD-C unexpectedly becomes unavailable, endpoint1 fails to renew its registration.  It then starts the RD discovery process again, picks the next available RD (this time B) and gets a new registration from that.</p>
+<p id="rfc.section.7.2.p.11">RD-B then sends an update to the proxies:</p>
+<pre>
+Res: Patch Result
+Add one record: &lt;/reg/11&gt;;ep="endpoint1";d="facility23.eu.example.com";
+    con="coap://[2001:db8:23::1]";lt-age=0
+</pre>
+<p id="rfc.section.7.2.p.12">The proxies remove C&#8217;s registration <samp>/reg/42</samp> based on the duplicate name and now answer requests like this:</p>
+<pre>
+Req: GET /rd-lookup/ep?ep=endpoint1&amp;d=facility23.eu.example.com
+
+Res: 2.05 Content
+Payload:
+&lt;coap://[2001:db8:23::2]/reg/11&gt;;ep="endpoint1";
+    d="facility23.eu.example.com";con="coap://[2001:db8:23::1]"
+
+Req: GET /rd-lookup/res?if=core.s&amp;d=facility23.eu.example.com
+
+Res: 2.05 Content
+Payload:
+&lt;coap://[2001:db8:23::1]/sensors/temp&gt;;if="core.s";
+    anchor="coap://[2001:db8:23::1]/sensors/temp";
+    provenance="coap://[2001:db8:23:2]/reg/11",
+...
+</pre>
+<h1 id="rfc.section.7.2.1">
+<a href="#rfc.section.7.2.1">7.2.1.</a> <a href="#variation-large-number-of-registrations-localized-queries" id="variation-large-number-of-registrations-localized-queries">Variation: Large number of registrations, localized queries</a>
+</h1>
+<p id="rfc.section.7.2.1.p.1">If the lookup proxies are not capable of keeping track of all the registered data, they can opt to forward requests to all the RDs instead.  In this example, queries are often localized (queries within a building are often limited to the same building), so LP-Y could decide to only keep two particular observations active to each RD:</p>
+<p></p>
+
+<ul>
+<li><samp>/rd-lookup/ep?href=/*&amp;d=facility23.eu.example.com</samp></li>
+<li><samp>/rd-lookup/res?provenance=/*&amp;d=facility23.eu.example.com</samp></li>
+</ul>
+<p id="rfc.section.7.2.1.p.3">With those observed, it could still accurately respond to the above queries without calling out to the other RDs.</p>
+<p id="rfc.section.7.2.1.p.4">If a query came in as <samp>/rd-lookup/res?if=core.s</samp>, it would still need to forward that query to all RDs to build an overview of all sensors in the network for the requester.</p>
+<h1 id="rfc.section.7.2.2">
+<a href="#rfc.section.7.2.2">7.2.2.</a> <a href="#variation-combination-with-anycast" id="variation-combination-with-anycast">Variation: Combination with anycast</a>
+</h1>
+<p id="rfc.section.7.2.2.p.1">In a variation of this, all the RDs and LPs can use a shared anycast address.  They would be then advertised as in the anycast/NoSQL example.</p>
+<p id="rfc.section.7.2.2.p.2">All RDs would need to be configured such that they encode their host name in their path (eg. <samp>/reg/rd-c/42</samp>).  Nodes must then have proxy forwarding rules set up such that</p>
+<p></p>
+
+<ul>
+<li>
+<samp>/rd</samp> is served from the local RD if there is one, or forwarded to any (the closest) RD</li>
+<li>
+<samp>/reg/*</samp> requests are served if hosted locally, otherwise forwarded to the appropriate RD, or respond with a 5.04 Gateway timeout if that is not available any more</li>
+<li>Lookup request are served from the local lookup proxy, or forwarded to the closest one on RD-only hosts.</li>
+</ul>
+<p id="rfc.section.7.2.2.p.4">Such a setup is easier if all hosts provide both registration and lookup functionality.</p>
+<h1 id="rfc.section.7.3">
+<a href="#rfc.section.7.3">7.3.</a> <a href="#anonymous-global-endpoint-lookup" id="anonymous-global-endpoint-lookup">Anonymous global endpoint lookup</a>
+</h1>
+<p id="rfc.section.7.3.p.1">This scenario describes a way to provide connectivity into devices in difficult network situations based on identifiers of their cryptographic keys, the KID context identifiers of OSCORE.  A global network of untrusted Resource Directory servers is built, and the individual servers provide network relaying services for endpoints that operate behind NAT or firewalls.</p>
+<p id="rfc.section.7.3.p.2">It assumes the existance of two other hypothetical mechanisms:</p>
+<p></p>
+
+<ul>
+<li>The RD Parameter named &#8220;proxy&#8221;.  <br><br> An endpoint can ask the RD to act as a reverse proxy for it by adding the <samp>proxy</samp> registration parameter; an RD that does proxying disregards the implicit <samp>con</samp> parameter and announces a name of its own instead.</li>
+<li>A URI scheme called &#8220;oscore&#8221;.  <br><br> A URI of the form <samp>oscore://VGhh...2aWNl/sensor/temp</samp> refers to a resource <samp>/sensor/temp/</samp> on any OSCORE capable host with which the client has a key established under the KID context given by the base64 string in the authority component.  <br><br> To resolve the URI to a concrete protocol and socket, a form of Resource Directory assisted protocol negotiation is used.</li>
+</ul>
+<p id="rfc.section.7.3.p.4">RD servers join a global pool of servers using a protocol that is not further described here, but could conceivably be based on distributed hash tables (DHTs).</p>
+<p id="rfc.section.7.3.p.5">Endpoints register only with a key derived name, and usually do not provide any links because those would be accessible only to authenticated requesters.</p>
+<p id="rfc.section.7.3.p.6">They register at any of a set of preconfigured DNS names for finding a Resource Directory.  Those names resolve to any of the currently active RD servers, where geographic proximity could play a role in the choice of address returned.</p>
+<p id="rfc.section.7.3.p.7">When the endpoint discovers the registration URI (for which it uses coap+tcp to make later proxying more stable), the server returns links to its explicit IP address:</p>
+<pre>
+&lt;coap+tcp://[2001:db8:1:2::3]/rd&gt;;rt="core.rd",
+&lt;coap+tcp://[2001:db8:1:2::3]/rd-lookup/ep&gt;;rt="core.rd-lookup-ep"
+</pre>
+<p id="rfc.section.7.3.p.8">(This avoids conflict when the DNS assignment flips and a different host (on which the registration resource is unknown) is returned.  Alternatively, the servers could use a unified scheme of registration resource naming like <samp>/reg/${name}</samp> or a UUID-based scheme.)</p>
+<p id="rfc.section.7.3.p.9">The endpoint then registers:</p>
+<pre>
+Req: POST coap+tcp://[2001:db8:1:2::3]/rd?proxy&amp;ep=VGhhdCdzIHRoZSB\
+    LZXlJZENvbnRleHQgdXNlZCB3aXRoIHRoaXMgZGV2aWNl
+Payload: empty
+
+Res: 2.01 Created
+Location: /reg/123
+</pre>
+<p id="rfc.section.7.3.p.10">When a client wants to talk to that registered server, its RD discovery process will yield another instance, which it then queries:</p>
+<pre>
+Req: GET coap://[2001:db8:4:5::6]/rd-lookup/ep?ep=VGhhdCdzIHRoZSBL\
+    ZXlJZENvbnRleHQgdXNlZCB3aXRoIHRoaXMgZGV2aWNl
+</pre>
+<p id="rfc.section.7.3.p.11">The server will look up the given ep name in the backing DHT, and forward the request right to the (precisely: any) RD server that has announced that ep value, which then answers:</p>
+<pre>
+Res: 2.05 Created
+Payload:
+&lt;coap+tcp://[2001:db8:1:2::3]/reg/123&gt;;ep="VGhh...2aWNl";
+    con="coap://[2001:db8:1:2::3]:10123";
+    at="coap+tcp://[2001:db8:1:2::3]:10123"
+</pre>
+<p id="rfc.section.7.3.p.12">(This particular server uses multiple ports to tell traffic for different endpoints apart; it could just as well use a catch-all DNS record, do name based virtual hosting and announce <samp>con="coap://reg123.server3.example.com</samp> instead.)</p>
+<p id="rfc.section.7.3.p.13">The client will then use the discovered address to direct its OSCORE requests to, and the RD server will proxy for it.</p>
+<p id="rfc.section.7.3.p.14">Note that while this setup <em>can</em> serve as a generic RD and answer resource requests as well, it is doubtful whether there would be any interest in it given the data becomes public, and is limited by the necessity to have an <samp>ep=</samp> filter in all requests lest the network be flooded with requests.</p>
 <h1 id="rfc.references">
-<a href="#rfc.references">5.</a> Informative References</h1>
+<a href="#rfc.references">8.</a> Informative References</h1>
 <table><tbody>
+<tr>
+<td class="reference"><b id="I-D.ietf-core-dynlink">[I-D.ietf-core-dynlink]</b></td>
+<td class="top">
+<a>Shelby, Z.</a>, <a>Koster, M.</a>, <a>Groves, C.</a>, <a>Zhu, J.</a> and <a>B. Silverajan</a>, "<a href="https://tools.ietf.org/html/draft-ietf-core-dynlink-04">Dynamic Resource Linking for Constrained RESTful Environments</a>", Internet-Draft draft-ietf-core-dynlink-04, September 2017.</td>
+</tr>
 <tr>
 <td class="reference"><b id="I-D.ietf-core-resource-directory">[I-D.ietf-core-resource-directory]</b></td>
 <td class="top">
 <a>Shelby, Z.</a>, <a>Koster, M.</a>, <a>Bormann, C.</a>, <a>Stok, P.</a> and <a>C. Amsuess</a>, "<a href="https://tools.ietf.org/html/draft-ietf-core-resource-directory-12">CoRE Resource Directory</a>", Internet-Draft draft-ietf-core-resource-directory-12, October 2017.</td>
 </tr>
 <tr>
+<td class="reference"><b id="RFC3986">[RFC3986]</b></td>
+<td class="top">
+<a>Berners-Lee, T.</a>, <a>Fielding, R.</a> and <a>L. Masinter</a>, "<a href="https://tools.ietf.org/html/rfc3986">Uniform Resource Identifier (URI): Generic Syntax</a>", STD 66, RFC 3986, DOI 10.17487/RFC3986, January 2005.</td>
+</tr>
+<tr>
 <td class="reference"><b id="RFC7252">[RFC7252]</b></td>
 <td class="top">
 <a>Shelby, Z.</a>, <a>Hartke, K.</a> and <a>C. Bormann</a>, "<a href="https://tools.ietf.org/html/rfc7252">The Constrained Application Protocol (CoAP)</a>", RFC 7252, DOI 10.17487/RFC7252, June 2014.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8075">[RFC8075]</b></td>
+<td class="top">
+<a>Castellani, A.</a>, <a>Loreto, S.</a>, <a>Rahman, A.</a>, <a>Fossati, T.</a> and <a>E. Dijk</a>, "<a href="https://tools.ietf.org/html/rfc8075">Guidelines for Mapping Implementations: HTTP to the Constrained Application Protocol (CoAP)</a>", RFC 8075, DOI 10.17487/RFC8075, February 2017.</td>
 </tr>
 </tbody></table>
 <h1 id="rfc.authors"><a href="#rfc.authors">Author's Address</a></h1>
@@ -449,21 +809,47 @@ address {
 </li>
 <ul><li>3.1.   <a href="#rfc.section.3.1">Large numbers of registrations</a>
 </li>
-<li>3.2.   <a href="#rfc.section.3.2">Large amounts of requests</a>
+<li>3.2.   <a href="#rfc.section.3.2">Large number of requests</a>
 </li>
 <li>3.3.   <a href="#rfc.section.3.3">Redundancy</a>
 </li>
 </ul><li>4.   <a href="#rfc.section.4">Approaches</a>
 </li>
-<ul><li>4.1.   <a href="#rfc.section.4.1">Shared authority / anycast</a>
+<ul><li>4.1.   <a href="#rfc.section.4.1">Shared authority</a>
 </li>
 <li>4.2.   <a href="#rfc.section.4.2">Plain caching</a>
 </li>
 <li>4.3.   <a href="#rfc.section.4.3">RD-aware caching</a>
 </li>
-<li>4.4.   <a href="#rfc.section.4.4">Distinct entry points</a>
+<ul><li>4.3.1.   <a href="#rfc.section.4.3.1">Potential for improvement</a>
 </li>
-</ul><li>5.   <a href="#rfc.references">Informative References</a>
+</ul><li>4.4.   <a href="#rfc.section.4.4">Distinct registration points</a>
+</li>
+<ul><li>4.4.1.   <a href="#rfc.section.4.4.1">Redundancy and handover</a>
+</li>
+<li>4.4.2.   <a href="#rfc.section.4.4.2">Loops between RDs and proxies</a>
+</li>
+</ul></ul><li>5.   <a href="#rfc.section.5">Recommendations to RD</a>
+</li>
+<li>6.   <a href="#rfc.section.6">Proposed RD extensions</a>
+</li>
+<ul><li>6.1.   <a href="#rfc.section.6.1">Provenance</a>
+</li>
+<li>6.2.   <a href="#rfc.section.6.2">Lifetime Age</a>
+</li>
+</ul><li>7.   <a href="#rfc.section.7">Example scenarios</a>
+</li>
+<ul><li>7.1.   <a href="#rfc.section.7.1">Redundant and replicated resource lookup (anycast)</a>
+</li>
+<li>7.2.   <a href="#rfc.section.7.2">Redundant and replicated resource lookup (distinct registration points)</a>
+</li>
+<ul><li>7.2.1.   <a href="#rfc.section.7.2.1">Variation: Large number of registrations, localized queries</a>
+</li>
+<li>7.2.2.   <a href="#rfc.section.7.2.2">Variation: Combination with anycast</a>
+</li>
+</ul><li>7.3.   <a href="#rfc.section.7.3">Anonymous global endpoint lookup</a>
+</li>
+</ul><li>8.   <a href="#rfc.references">Informative References</a>
 </li>
 <li><a href="#rfc.authors">Author's Address</a>
 </li>
