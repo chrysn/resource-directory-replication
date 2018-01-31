@@ -22,8 +22,6 @@ author:
   code: '1020'
   country: Austria
   phone: "+43-664-9790639"
-informative:
-  I-D.ietf-core-resource-directory:
 
 --- abstract
 
@@ -41,13 +39,16 @@ groundwork for later documents.
 
 # Introduction {#introduction}
 
-@@@ see abstract for now
+\[ See abstract for now. \]
+
+This document is being developed in a git based workflow.
+Please see https://github.com/chrysn/resource-directory-replication
+for more details and easy ways to contribute.
 
 # Terminology
 
-@@@
-
-Origin Server from {{?RFC7252}}
+This document assumes familiarity with {{?RFC7252}} and {{?I-D.ietf-core-resource-directory}}
+and uses terminology from those documents.
 
 Examples in which URI paths like `/rd` or `/rd-lookup/res` are used
 assume that those URIs have been obtained before by an RD Discovery process;
@@ -77,7 +78,7 @@ and the traffic load on the registration server grows with the traffic it is pro
 Not all approaches to constrained restful communication use the Resource Directory only in the setup stage;
 some are might also utilize a Resource Directory in more day-to-day operation.
 
-@@@ get some numbers on how many requests a single RD can deal with
+\[ TODO: get some numbers on how many requests a single RD can deal with. \]
 
 ## Redundancy
 
