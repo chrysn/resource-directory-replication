@@ -190,7 +190,8 @@ For example, assume that the proxy frequently receives requests of the shape
 
 for arbitrary values of X. Then it can use the following request to keep a fresh cache:
 
-    Req: GET coap://rd.example.com/rd-lookup/res?rt=core.s&rt=ex.temperature&ex.building=8341
+    Req: GET coap://rd.example.com/rd-lookup/res?rt=core.s&rt=ex.temperature
+        &ex.building=8341
     Observe: 1
 
 and from that serve filtered responses to individual requests.
@@ -359,7 +360,8 @@ then a lookup will add a provenance attribute:
 
     Res: 2.05 Content
     Payload:
-    <coap://.../sensors/temp>;if="core.s";anchor="coap://...";provenance="/reg/1234"
+    <coap://.../sensors/temp>;if="core.s";anchor="coap://...";
+        provenance="/reg/1234"
 
 This is not an IANA consideration as there is no established registry
 of link attributes.
@@ -454,7 +456,8 @@ Discovery invariably looks like this:
 
 An endpoint close to B would therefore register with
 
-    Req: POST coap://[2001:db8::an1:ca57]/rd?ep=endpoint1&d=facility23.eu.example.com
+    Req: POST coap://[2001:db8::an1:ca57]/rd?ep=endpoint1&
+        d=facility23.eu.example.com
     Payload:
     </sensors/temp>;if="core.s"
 
@@ -463,7 +466,8 @@ An endpoint close to B would therefore register with
 
 Any client could immediately see that the endpoint is registered by issuing
 
-    Req: GET coap://[2001:db8::an1:ca57]/rd-lookup/ep?ep=endpoint1&d=facility23.eu.example.com
+    Req: GET coap://[2001:db8::an1:ca57]/rd-lookup/ep?ep=endpoint1&
+        d=facility23.eu.example.com
 
     Res: 2.05 Content
     Payload:
@@ -528,7 +532,8 @@ and hosts that do not serve both functions provide lookup as follows:
 
 When a client then registers as
 
-    Req: POST coap://[2001:db8:23::3]/rd?ep=endpoint1&d=facility23.eu.example.com
+    Req: POST coap://[2001:db8:23::3]/rd?ep=endpoint1&
+        d=facility23.eu.example.com
     Payload:
     </sensors/temp>;if="core.s"
 
@@ -543,7 +548,8 @@ the RD at 3 sends notifications to the observing lookup proxies X, Y and Z:
 
 As soon as that is processed, clients can query LP-Z
 
-    Req: GET coap://[2001:db8:4::4]/rd-lookup/ep?ep=endpoint1&d=facility23.eu.example.com
+    Req: GET coap://[2001:db8:4::4]/rd-lookup/ep?ep=endpoint1&
+        d=facility23.eu.example.com
 
     Res: 2.05 Content
     Payload:
