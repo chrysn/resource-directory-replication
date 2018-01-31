@@ -1,6 +1,6 @@
 ---
 title: Resource Directory Replication
-docname: draft-amsuess-core-resource-directory-replication-latest
+docname: draft-amsuess-core-rd-replication-latest
 stand_alone: true
 ipr: trust200902
 cat: info
