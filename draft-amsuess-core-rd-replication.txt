@@ -66,13 +66,17 @@ Internet-Draft       Resource Directory Replication         January 2018
 
 1.  Introduction
 
-   @@@ see abstract for now
+   [ See abstract for now. ]
+
+   This document is being developed in a git based workflow.  Please see
+   https://github.com/chrysn/resource-directory-replication for more
+   details and easy ways to contribute.
 
 2.  Terminology
 
-   @@@
-
-   Origin Server from [RFC7252]
+   This document assumes familiarity with [RFC7252] and
+   [I-D.ietf-core-resource-directory] and uses terminology from those
+   documents.
 
    Examples in which URI paths like "/rd" or "/rd-lookup/res" are used
    assume that those URIs have been obtained before by an RD Discovery
@@ -105,10 +109,6 @@ Internet-Draft       Resource Directory Replication         January 2018
 
 
 
-
-
-
-
 Amsuess                  Expires August 4, 2018                 [Page 2]
 
 Internet-Draft       Resource Directory Replication         January 2018
@@ -120,7 +120,8 @@ Internet-Draft       Resource Directory Replication         January 2018
    Resource Directory only in the setup stage; some are might also
    utilize a Resource Directory in more day-to-day operation.
 
-   @@@ get some numbers on how many requests a single RD can deal with
+   [ TODO: get some numbers on how many requests a single RD can deal
+   with. ]
 
 3.3.  Redundancy
 
@@ -160,8 +161,7 @@ Internet-Draft       Resource Directory Replication         January 2018
    Compared to the other approaches, this is more complex to set up when
    it involves managing anycast addresses: Running an IPv4 anycast
    network on Internet scale requires running an Autonomous System.  In
-   either variation, all server instances are tightly coupled; they need
-   shared administration and probably need to run the same software.
+
 
 
 
@@ -169,6 +169,9 @@ Amsuess                  Expires August 4, 2018                 [Page 3]
 
 Internet-Draft       Resource Directory Replication         January 2018
 
+
+   either variation, all server instances are tightly coupled; they need
+   shared administration and probably need to run the same software.
 
    The replication characteristics are laregly inherited from the
    underlying backend.
@@ -214,10 +217,7 @@ Res: 2.05 Content
 <coap://europe3.proxy.rd.example.com/rd-lookup/res>;rt="core.rd-lookup-res",
 <coap://europe3.proxy.rd.example.com/rd-lookup/ep>;rt="core.rd-lookup-ep"
 
-   Special care should be taken when a reverse proxy is not accessed by
-   the client under the same address as the origin server, as relative
-   references change their meaning when served from there.  This can be
-   ignored completely on the resource lookup interface (as long as the
+
 
 
 
@@ -226,6 +226,10 @@ Amsuess                  Expires August 4, 2018                 [Page 4]
 Internet-Draft       Resource Directory Replication         January 2018
 
 
+   Special care should be taken when a reverse proxy is not accessed by
+   the client under the same address as the origin server, as relative
+   references change their meaning when served from there.  This can be
+   ignored completely on the resource lookup interface (as long as the
    provenance extension is not used); ignoring it on the endpoint lookup
    interface gives the client "wrong" results, though that is likely to
    only matter to applications that use both the lookup and the
@@ -270,10 +274,6 @@ Observe: 1
 
    and from that serve filtered responses to individual requests.
 
-   This method shares the advantages of plain caching, with reduced
-   limitations but requiring specialized proxying software.  The
-   software does not necessarily need more configuration: A general-
-   purpose proxy is free to explore the origin server's ".well-known/
 
 
 
@@ -282,6 +282,10 @@ Amsuess                  Expires August 4, 2018                 [Page 5]
 Internet-Draft       Resource Directory Replication         January 2018
 
 
+   This method shares the advantages of plain caching, with reduced
+   limitations but requiring specialized proxying software.  The
+   software does not necessarily need more configuration: A general-
+   purpose proxy is free to explore the origin server's ".well-known/
    core" information, and can decide to enable RD optimizations after
    discovering that the frequently accesses resources are of resource
    type "core.rd-lookup-*".
@@ -323,13 +327,9 @@ Internet-Draft       Resource Directory Replication         January 2018
    cache values for extended periods of time when the RD becomes
    intermittently unavailable.
 
-4.4.  Distinct registration points
 
-   Caching proxies that are aware of RD semantics could be extended to
-   gather information from more than one Resource Directory.
 
-   When executing queries, they would consider candidates from all
-   configured upstream servers and report the union of the respective
+
 
 
 
@@ -338,6 +338,13 @@ Amsuess                  Expires August 4, 2018                 [Page 6]
 Internet-Draft       Resource Directory Replication         January 2018
 
 
+4.4.  Distinct registration points
+
+   Caching proxies that are aware of RD semantics could be extended to
+   gather information from more than one Resource Directory.
+
+   When executing queries, they would consider candidates from all
+   configured upstream servers and report the union of the respective
    query results.  At this stage, it is highly recommended that content
    transcoding takes place.
 
@@ -376,6 +383,17 @@ Internet-Draft       Resource Directory Replication         January 2018
    information twice from two registration resources available for
    lookup.
 
+
+
+
+
+
+
+Amsuess                  Expires August 4, 2018                 [Page 7]
+
+Internet-Draft       Resource Directory Replication         January 2018
+
+
 4.4.2.  Loops between RDs and proxies
 
    In this configuration, it can be tempting to run a Resource Directory
@@ -385,14 +403,6 @@ Internet-Draft       Resource Directory Replication         January 2018
    [ It might be easier to recommend simply using different hosts, at
    least host names, in those cases, or anything else that allows direct
    and not publically advertised access to the real RDs' lookups. ]
-
-
-
-
-Amsuess                  Expires August 4, 2018                 [Page 7]
-
-Internet-Draft       Resource Directory Replication         January 2018
-
 
    In such a setup, other aggregating lookup proxies must take care to
    only select locally registered entries.  With the current filtering
@@ -432,6 +442,14 @@ Internet-Draft       Resource Directory Replication         January 2018
    This introduces a new link attribute "provenance".  Its value is a
    URI reference as described by [RFC3986] Section 4.1.  The URI is to
    be interpreted by the same rules that apply to the "anchor"
+
+
+
+Amsuess                  Expires August 4, 2018                 [Page 8]
+
+Internet-Draft       Resource Directory Replication         January 2018
+
+
    attribute, namely by resolving the reference relative to the
    requested document's URI.  The attribute should not be repeated, and
    in presence of multiple attributes, only the last should be
@@ -442,13 +460,6 @@ Internet-Draft       Resource Directory Replication         January 2018
    evaluate whether it really makes sense to inherit anchor's rules or
    whether it's better to phrase it in a way that the requested base URI
    always counts. ]
-
-
-
-Amsuess                  Expires August 4, 2018                 [Page 8]
-
-Internet-Draft       Resource Directory Replication         January 2018
-
 
    The URI given in the "provenance" attribute describes where the
    information in the link was obtained from.  An aggregator of links
@@ -487,6 +498,14 @@ Payload:
 
    o  Validity: URI
 
+
+
+
+Amsuess                  Expires August 4, 2018                 [Page 9]
+
+Internet-Draft       Resource Directory Replication         January 2018
+
+
    o  Use: Resource lookup only
 
    o  Description: If "provenance" or any string starting with
@@ -495,16 +514,6 @@ Payload:
       all looked up links; otherwise, the RD will not present them.  The
       filtering rules still apply: If there is a "=" sign in the query
       argument, only links with matching provenance will be reported.
-
-
-
-
-
-
-Amsuess                  Expires August 4, 2018                 [Page 9]
-
-Internet-Draft       Resource Directory Replication         January 2018
-
 
 6.2.  Lifetime Age
 
@@ -544,6 +553,15 @@ Internet-Draft       Resource Directory Replication         January 2018
    endpoint's communication patterns, it may be prudent for an RD only
    to reveal this information on a need-to-know basis.
 
+
+
+
+
+Amsuess                  Expires August 4, 2018                [Page 10]
+
+Internet-Draft       Resource Directory Replication         January 2018
+
+
 7.  Example scenarios
 
 7.1.  Redundant and replicated resource lookup (anycast)
@@ -554,13 +572,6 @@ Internet-Draft       Resource Directory Replication         January 2018
    The directory is scaled using the shared authority / anycast
    approach, and the RD implementation is backed by a NoSQL-style
    distributed database.
-
-
-
-Amsuess                  Expires August 4, 2018                [Page 10]
-
-Internet-Draft       Resource Directory Replication         January 2018
-
 
            /'''''''\______/'''''\__/''''''''\
         /-                                   -\
@@ -598,6 +609,15 @@ Payload:
 Res: 2.01 Created
 Location: /reg/123e4567-e89b-12d3-a456-426655440000
 
+
+
+
+
+Amsuess                  Expires August 4, 2018                [Page 11]
+
+Internet-Draft       Resource Directory Replication         January 2018
+
+
    Any client could immediately see that the endpoint is registered by
    issuing
 
@@ -610,14 +630,6 @@ Payload:
 
    If at any point in time the RD instance B becomes unavailable, the
    registering endpoint's renewal requests will be routed to the next
-
-
-
-Amsuess                  Expires August 4, 2018                [Page 11]
-
-Internet-Draft       Resource Directory Replication         January 2018
-
-
    available instance, for example A.  That instance can update the
    shared database with renewed lifetime just as B would have done.
 
@@ -653,6 +665,15 @@ Internet-Draft       Resource Directory Replication         January 2018
          +--+--+            +--+--+          +--+
          E  E  C            E  E  E          C  C
 
+
+
+
+
+Amsuess                  Expires August 4, 2018                [Page 12]
+
+Internet-Draft       Resource Directory Replication         January 2018
+
+
    The lookup proxies in this scenario are constantly observing the
    "/rd-lookup/ep?href=/*" and "/rd-lookup/res?provenance=/*" resources
    of known RDs on other hosts, and might get updated internally with
@@ -664,15 +685,6 @@ Internet-Draft       Resource Directory Replication         January 2018
    RDAO announcements point to the nearest host (whose IP address ends
    with the numbers of the respective box in the figure), and hosts that
    do not serve both functions provide lookup as follows:
-
-
-
-
-
-Amsuess                  Expires August 4, 2018                [Page 12]
-
-Internet-Draft       Resource Directory Replication         January 2018
-
 
    Req: GET coap://[2001:db8:23::3]/.well-known/core?rt=core.rd*
 
@@ -710,6 +722,14 @@ Payload:
    (Note that lt-age is elided to the client as per the security
    considerations for that information).
 
+
+
+
+Amsuess                  Expires August 4, 2018                [Page 13]
+
+Internet-Draft       Resource Directory Replication         January 2018
+
+
    When a net split happens that cuts LP-Z's site off the rest, it keeps
    that information available until the lt-age runs out.
 
@@ -719,16 +739,6 @@ Payload:
    from that.
 
    RD-B then sends an update to the proxies:
-
-
-
-
-
-
-Amsuess                  Expires August 4, 2018                [Page 13]
-
-Internet-Draft       Resource Directory Replication         January 2018
-
 
  Res: Patch Result
  Add one record: </reg/11>;ep="endpoint1";d="facility23.eu.example.com";
@@ -769,6 +779,13 @@ Internet-Draft       Resource Directory Replication         January 2018
    With those observed, it could still accurately respond to the above
    queries without calling out to the other RDs.
 
+
+
+Amsuess                  Expires August 4, 2018                [Page 14]
+
+Internet-Draft       Resource Directory Replication         January 2018
+
+
    If a query came in as "/rd-lookup/res?if=core.s", it would still need
    to forward that query to all RDs to build an overview of all sensors
    in the network for the requester.
@@ -778,13 +795,6 @@ Internet-Draft       Resource Directory Replication         January 2018
    In a variation of this, all the RDs and LPs can use a shared anycast
    address.  They would be then advertised as in the anycast/NoSQL
    example.
-
-
-
-Amsuess                  Expires August 4, 2018                [Page 14]
-
-Internet-Draft       Resource Directory Replication         January 2018
-
 
    All RDs would need to be configured such that they encode their host
    name in their path (eg. "/reg/rd-c/42").  Nodes must then have proxy
@@ -823,6 +833,15 @@ Internet-Draft       Resource Directory Replication         January 2018
 
    o  A URI scheme called "oscore".
 
+
+
+
+
+Amsuess                  Expires August 4, 2018                [Page 15]
+
+Internet-Draft       Resource Directory Replication         January 2018
+
+
       A URI of the form "oscore://VGhh...2aWNl/sensor/temp" refers to a
       resource "/sensor/temp/" on any OSCORE capable host with which the
       client has a key established under the KID context given by the
@@ -834,13 +853,6 @@ Internet-Draft       Resource Directory Replication         January 2018
    RD servers join a global pool of servers using a protocol that is not
    further described here, but could conceivably be based on distributed
    hash tables (DHTs).
-
-
-
-Amsuess                  Expires August 4, 2018                [Page 15]
-
-Internet-Draft       Resource Directory Replication         January 2018
-
 
    Endpoints register only with a key derived name, and usually do not
    provide any links because those would be accessible only to
@@ -878,6 +890,14 @@ Internet-Draft       Resource Directory Replication         January 2018
    Req: GET coap://[2001:db8:4:5::6]/rd-lookup/ep?ep=VGhhdCdzIHRoZSBL\
        ZXlJZENvbnRleHQgdXNlZCB3aXRoIHRoaXMgZGV2aWNl
 
+
+
+
+Amsuess                  Expires August 4, 2018                [Page 16]
+
+Internet-Draft       Resource Directory Replication         January 2018
+
+
    The server will look up the given ep name in the backing DHT, and
    forward the request right to the (precisely: any) RD server that has
    announced that ep value, which then answers:
@@ -890,14 +910,6 @@ Internet-Draft       Resource Directory Replication         January 2018
 
    (This particular server uses multiple ports to tell traffic for
    different endpoints apart; it could just as well use a catch-all DNS
-
-
-
-Amsuess                  Expires August 4, 2018                [Page 16]
-
-Internet-Draft       Resource Directory Replication         January 2018
-
-
    record, do name based virtual hosting and announce
    "con="coap://reg123.server3.example.com" instead.)
 
@@ -933,18 +945,6 @@ Internet-Draft       Resource Directory Replication         January 2018
               DOI 10.17487/RFC7252, June 2014,
               <https://www.rfc-editor.org/info/rfc7252>.
 
-   [RFC8075]  Castellani, A., Loreto, S., Rahman, A., Fossati, T., and
-              E. Dijk, "Guidelines for Mapping Implementations: HTTP to
-              the Constrained Application Protocol (CoAP)", RFC 8075,
-              DOI 10.17487/RFC8075, February 2017,
-              <https://www.rfc-editor.org/info/rfc8075>.
-
-Author's Address
-
-
-
-
-
 
 
 
@@ -954,20 +954,20 @@ Amsuess                  Expires August 4, 2018                [Page 17]
 Internet-Draft       Resource Directory Replication         January 2018
 
 
+   [RFC8075]  Castellani, A., Loreto, S., Rahman, A., Fossati, T., and
+              E. Dijk, "Guidelines for Mapping Implementations: HTTP to
+              the Constrained Application Protocol (CoAP)", RFC 8075,
+              DOI 10.17487/RFC8075, February 2017,
+              <https://www.rfc-editor.org/info/rfc8075>.
+
+Author's Address
+
    Christian Amsuess
    Hollandstr. 12/4
    1020
    Austria
 
    Phone: +43-664-9790639
-
-
-
-
-
-
-
-
 
 
 
