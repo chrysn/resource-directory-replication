@@ -269,11 +269,11 @@ Req: GET /rd-lookup/res?rt=core.s&rt=ex.temperature&ex.building=8341&title=X
    for arbitrary values of X.  Then it can use the following request to
    keep a fresh cache:
 
-Req: GET coap://rd.example.com/rd-lookup/res?rt=core.s&rt=ex.temperature&ex.building=8341
+Req: GET coap://rd.example.com/rd-lookup/res?rt=core.s&rt=ex.temperature
+    &ex.building=8341
 Observe: 1
 
    and from that serve filtered responses to individual requests.
-
 
 
 
@@ -478,11 +478,12 @@ Internet-Draft       Resource Directory Replication         January 2018
 
    then a lookup will add a provenance attribute:
 
-Req: GET /rd-lookup/res?if=core.s
+   Req: GET /rd-lookup/res?if=core.s
 
-Res: 2.05 Content
-Payload:
-<coap://.../sensors/temp>;if="core.s";anchor="coap://...";provenance="/reg/1234"
+   Res: 2.05 Content
+   Payload:
+   <coap://.../sensors/temp>;if="core.s";anchor="coap://...";
+       provenance="/reg/1234"
 
    This is not an IANA consideration as there is no established registry
    of link attributes.
@@ -497,7 +498,6 @@ Payload:
    o  short: provenance
 
    o  Validity: URI
-
 
 
 
@@ -602,13 +602,13 @@ Internet-Draft       Resource Directory Replication         January 2018
 
    An endpoint close to B would therefore register with
 
-Req: POST coap://[2001:db8::an1:ca57]/rd?ep=endpoint1&d=facility23.eu.example.com
-Payload:
-</sensors/temp>;if="core.s"
+   Req: POST coap://[2001:db8::an1:ca57]/rd?ep=endpoint1&
+       d=facility23.eu.example.com
+   Payload:
+   </sensors/temp>;if="core.s"
 
-Res: 2.01 Created
-Location: /reg/123e4567-e89b-12d3-a456-426655440000
-
+   Res: 2.01 Created
+   Location: /reg/123e4567-e89b-12d3-a456-426655440000
 
 
 
@@ -621,12 +621,13 @@ Internet-Draft       Resource Directory Replication         January 2018
    Any client could immediately see that the endpoint is registered by
    issuing
 
-Req: GET coap://[2001:db8::an1:ca57]/rd-lookup/ep?ep=endpoint1&d=facility23.eu.example.com
+   Req: GET coap://[2001:db8::an1:ca57]/rd-lookup/ep?ep=endpoint1&
+       d=facility23.eu.example.com
 
-Res: 2.05 Content
-Payload:
-</reg/123e4567-e89b-12d3-a456-426655440000>;ep="endpoint1";
-    d="facility23.eu.example.com";con="coap://[2001:db8:23::1]"
+   Res: 2.05 Content
+   Payload:
+   </reg/123e4567-e89b-12d3-a456-426655440000>;ep="endpoint1";
+       d="facility23.eu.example.com";con="coap://[2001:db8:23::1]"
 
    If at any point in time the RD instance B becomes unavailable, the
    registering endpoint's renewal requests will be routed to the next
@@ -668,7 +669,6 @@ Payload:
 
 
 
-
 Amsuess                  Expires August 4, 2018                [Page 12]
 
 Internet-Draft       Resource Directory Replication         January 2018
@@ -696,12 +696,13 @@ Internet-Draft       Resource Directory Replication         January 2018
 
    When a client then registers as
 
-Req: POST coap://[2001:db8:23::3]/rd?ep=endpoint1&d=facility23.eu.example.com
-Payload:
-</sensors/temp>;if="core.s"
+   Req: POST coap://[2001:db8:23::3]/rd?ep=endpoint1&
+       d=facility23.eu.example.com
+   Payload:
+   </sensors/temp>;if="core.s"
 
-Res: 2.01 Created
-Location: /reg/42
+   Res: 2.01 Created
+   Location: /reg/42
 
    the RD at 3 sends notifications to the observing lookup proxies X, Y
    and Z:
@@ -712,15 +713,14 @@ Location: /reg/42
 
    As soon as that is processed, clients can query LP-Z
 
-Req: GET coap://[2001:db8:4::4]/rd-lookup/ep?ep=endpoint1&d=facility23.eu.example.com
+   Req: GET coap://[2001:db8:4::4]/rd-lookup/ep?ep=endpoint1&
+       d=facility23.eu.example.com
 
-Res: 2.05 Content
-Payload:
-<coap://[2001:db8:23::3]/reg/42>;ep="endpoint1";
-    d="facility23.eu.example.com";con="coap://[2001:db8:23::1]"
+   Res: 2.05 Content
+   Payload:
+   <coap://[2001:db8:23::3]/reg/42>;ep="endpoint1";
+       d="facility23.eu.example.com";con="coap://[2001:db8:23::1]"
 
-   (Note that lt-age is elided to the client as per the security
-   considerations for that information).
 
 
 
@@ -729,6 +729,9 @@ Amsuess                  Expires August 4, 2018                [Page 13]
 
 Internet-Draft       Resource Directory Replication         January 2018
 
+
+   (Note that lt-age is elided to the client as per the security
+   considerations for that information).
 
    When a net split happens that cuts LP-Z's site off the rest, it keeps
    that information available until the lt-age runs out.
@@ -776,15 +779,15 @@ Internet-Draft       Resource Directory Replication         January 2018
 
    o  "/rd-lookup/res?provenance=/*&d=facility23.eu.example.com"
 
-   With those observed, it could still accurately respond to the above
-   queries without calling out to the other RDs.
-
 
 
 Amsuess                  Expires August 4, 2018                [Page 14]
 
 Internet-Draft       Resource Directory Replication         January 2018
 
+
+   With those observed, it could still accurately respond to the above
+   queries without calling out to the other RDs.
 
    If a query came in as "/rd-lookup/res?if=core.s", it would still need
    to forward that query to all RDs to build an overview of all sensors
@@ -831,9 +834,6 @@ Internet-Draft       Resource Directory Replication         January 2018
       proxying disregards the implicit "con" parameter and announces a
       name of its own instead.
 
-   o  A URI scheme called "oscore".
-
-
 
 
 
@@ -841,6 +841,8 @@ Amsuess                  Expires August 4, 2018                [Page 15]
 
 Internet-Draft       Resource Directory Replication         January 2018
 
+
+   o  A URI scheme called "oscore".
 
       A URI of the form "oscore://VGhh...2aWNl/sensor/temp" refers to a
       resource "/sensor/temp/" on any OSCORE capable host with which the
@@ -887,8 +889,6 @@ Internet-Draft       Resource Directory Replication         January 2018
    When a client wants to talk to that registered server, its RD
    discovery process will yield another instance, which it then queries:
 
-   Req: GET coap://[2001:db8:4:5::6]/rd-lookup/ep?ep=VGhhdCdzIHRoZSBL\
-       ZXlJZENvbnRleHQgdXNlZCB3aXRoIHRoaXMgZGV2aWNl
 
 
 
@@ -897,6 +897,9 @@ Amsuess                  Expires August 4, 2018                [Page 16]
 
 Internet-Draft       Resource Directory Replication         January 2018
 
+
+   Req: GET coap://[2001:db8:4:5::6]/rd-lookup/ep?ep=VGhhdCdzIHRoZSBL\
+       ZXlJZENvbnRleHQgdXNlZCB3aXRoIHRoaXMgZGV2aWNl
 
    The server will look up the given ep name in the backing DHT, and
    forward the request right to the (precisely: any) RD server that has
@@ -940,10 +943,7 @@ Internet-Draft       Resource Directory Replication         January 2018
               RFC 3986, DOI 10.17487/RFC3986, January 2005,
               <https://www.rfc-editor.org/info/rfc3986>.
 
-   [RFC7252]  Shelby, Z., Hartke, K., and C. Bormann, "The Constrained
-              Application Protocol (CoAP)", RFC 7252,
-              DOI 10.17487/RFC7252, June 2014,
-              <https://www.rfc-editor.org/info/rfc7252>.
+
 
 
 
@@ -953,6 +953,11 @@ Amsuess                  Expires August 4, 2018                [Page 17]
 
 Internet-Draft       Resource Directory Replication         January 2018
 
+
+   [RFC7252]  Shelby, Z., Hartke, K., and C. Bormann, "The Constrained
+              Application Protocol (CoAP)", RFC 7252,
+              DOI 10.17487/RFC7252, June 2014,
+              <https://www.rfc-editor.org/info/rfc7252>.
 
    [RFC8075]  Castellani, A., Loreto, S., Rahman, A., Fossati, T., and
               E. Dijk, "Guidelines for Mapping Implementations: HTTP to
@@ -968,11 +973,6 @@ Author's Address
    Austria
 
    Phone: +43-664-9790639
-
-
-
-
-
 
 
 

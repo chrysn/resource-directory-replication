@@ -437,7 +437,8 @@ Req: GET /rd-lookup/res?rt=core.s&amp;rt=ex.temperature&amp;ex.building=8341&amp
 </pre>
 <p id="rfc.section.4.3.p.4">for arbitrary values of X. Then it can use the following request to keep a fresh cache:</p>
 <pre>
-Req: GET coap://rd.example.com/rd-lookup/res?rt=core.s&amp;rt=ex.temperature&amp;ex.building=8341
+Req: GET coap://rd.example.com/rd-lookup/res?rt=core.s&amp;rt=ex.temperature
+    &amp;ex.building=8341
 Observe: 1
 </pre>
 <p id="rfc.section.4.3.p.5">and from that serve filtered responses to individual requests.</p>
@@ -509,7 +510,8 @@ Req: GET /rd-lookup/res?if=core.s
 
 Res: 2.05 Content
 Payload:
-&lt;coap://.../sensors/temp&gt;;if="core.s";anchor="coap://...";provenance="/reg/1234"
+&lt;coap://.../sensors/temp&gt;;if="core.s";anchor="coap://...";
+    provenance="/reg/1234"
 </pre>
 <p id="rfc.section.6.1.p.7">This is not an IANA consideration as there is no established registry of link attributes.</p>
 <p id="rfc.section.6.1.p.8">By itself, the provenance attribute does not need to be registered in the RD Parameters Registry because it is just another link attribute.  If it is desired that provenance information is only shown on request (eg. by RD-aware proxies), a parameter can be introduced there:</p>
@@ -571,7 +573,8 @@ Res: 2.05 Content
 </pre>
 <p id="rfc.section.7.1.p.5">An endpoint close to B would therefore register with</p>
 <pre>
-Req: POST coap://[2001:db8::an1:ca57]/rd?ep=endpoint1&amp;d=facility23.eu.example.com
+Req: POST coap://[2001:db8::an1:ca57]/rd?ep=endpoint1&amp;
+    d=facility23.eu.example.com
 Payload:
 &lt;/sensors/temp&gt;;if="core.s"
 
@@ -580,7 +583,8 @@ Location: /reg/123e4567-e89b-12d3-a456-426655440000
 </pre>
 <p id="rfc.section.7.1.p.6">Any client could immediately see that the endpoint is registered by issuing</p>
 <pre>
-Req: GET coap://[2001:db8::an1:ca57]/rd-lookup/ep?ep=endpoint1&amp;d=facility23.eu.example.com
+Req: GET coap://[2001:db8::an1:ca57]/rd-lookup/ep?ep=endpoint1&amp;
+    d=facility23.eu.example.com
 
 Res: 2.05 Content
 Payload:
@@ -622,7 +626,8 @@ Payload:
 </pre>
 <p id="rfc.section.7.2.p.5">When a client then registers as</p>
 <pre>
-Req: POST coap://[2001:db8:23::3]/rd?ep=endpoint1&amp;d=facility23.eu.example.com
+Req: POST coap://[2001:db8:23::3]/rd?ep=endpoint1&amp;
+    d=facility23.eu.example.com
 Payload:
 &lt;/sensors/temp&gt;;if="core.s"
 
@@ -637,7 +642,8 @@ Add one record: &lt;/reg/42&gt;;ep="endpoint1";d="facility23.eu.example.com";
 </pre>
 <p id="rfc.section.7.2.p.7">As soon as that is processed, clients can query LP-Z</p>
 <pre>
-Req: GET coap://[2001:db8:4::4]/rd-lookup/ep?ep=endpoint1&amp;d=facility23.eu.example.com
+Req: GET coap://[2001:db8:4::4]/rd-lookup/ep?ep=endpoint1&amp;
+    d=facility23.eu.example.com
 
 Res: 2.05 Content
 Payload:
