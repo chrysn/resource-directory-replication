@@ -651,9 +651,6 @@ It assumes the existance of two other hypothetical mechanisms:
     a form of
     Resource Directory assisted protocol negotiation is used.
 
-    Use of this scheme mandates that the "host name"
-    is sent in OSCORE messages' KID context identifier field.
-
 RD servers join a global pool of servers using a protocol that is not further described here,
 but could conceivably be based on distributed hash tables (DHTs).
 
@@ -695,23 +692,26 @@ which it then queries:
         ZXlJZENvbnRleHQgdXNlZCB3aXRoIHRoaXMgZGV2aWNl
 
 The server will look up the given ep name in the backing DHT,
-and forward the request right to the first RD server,
-which answers:
+and forward the request right to the (precisely: any) RD server that has announced that ep value,
+which then answers:
 
     Res: 2.05 Created
     Payload:
     <coap+tcp://[2001:db8:1:2::3]/reg/123>;ep="VGhh...2aWNl";
-        con="coap://[2001:db8:1:2::3]"
+        con="coap://[2001:db8:1:2::3]:10123";
+        at="coap+tcp://[2001:db8:1:2::3]:10123"
 
-Usually when the "proxy" RD parameter is used,
-the proxy server would need to establish and announce a hostname for each endpoint it is proxying for
-in order to tell requests apart.
-This is not needed in this particualr scenario because the server can tell requests apart
-by their OSCORE KID context
-(thus the whole setup doesn't need to go through DNS again,
-though technically that would work just as well).
+(This particular server uses multiple ports to tell traffic for different endpoints apart;
+it could just as well use a catch-all DNS record,
+do name based virtual hosting and announce
+`con="coap://reg123.server3.example.com` instead.)
 
 The client will then use the discovered address to direct its OSCORE requests to,
 and the RD server will proxy for it.
+
+Note that while this setup *can* serve as a generic RD and answer resource requests as well,
+it is doubtful whether there would be any interest in it given the data becomes public,
+and is limited by the necessity to have an `ep=` filter in all requests
+lest the network be flooded with requests.
 
 --- back
