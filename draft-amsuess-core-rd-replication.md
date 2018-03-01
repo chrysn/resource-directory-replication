@@ -97,6 +97,11 @@ The "shared authority" approach
 and proxy-based caching
   (in stages from using generic proxies to RD replication that only bears little resemblance to proxies).
 
+In the remainder of this document,
+the term "proxy" always refers to a device
+which a client can access as if it were a resource directory,
+and forwards the request to an actual RD.
+
 Elements from those chains can be mixed.
 
 ## Shared authority
