@@ -225,7 +225,6 @@ In the example above, were the variable part the `d` attribute (of endpoints, as
 the proxy could not do the filtering on its own becaus it would not have the required information.
 Even the above example does not allow for fully accurate replication, as the endpoint *might* register
 with a `title` endpoint attribute, even though no such attribute is specified right now.
-It might be worth considering to be more explicit about filtering "up" and "down" in the hiearchy in the RD specification.
 Also, annotating the links in the endpoint lookup with information about which registration they belong to
 would help the proxy keep all the data around to solve more complex queries.
 The provenance extension is proposed for that purpose.
@@ -279,7 +278,6 @@ and find that the RD is unavailable.
 It will then go through discovery again,
 find the most recently advertised registration URI
 or pick another one out of a set
-(see seciton on Recommendations)
 and start a new registration there.
 
 If the lookup proxies do not evict the old (and soon-to-time-out) registration
@@ -304,27 +302,6 @@ observing the resources
 and
 `/rd-lookup/res?provenance=/*`
 crudely provides that kind of filtering.
-
-# Recommendations to RD
-
-* Explicitly allow "foreign" URIs in discovery and endpoint lookup
-
-    * This is already being done for group memberships.
-
-    * This doesn't change a thing about there not being a `Location-Host` --
-      the registration is still with the server the registration was sent to.
-
-* Say something about what to do on registration or renewal failure:
-  When should discovery be restarted?
-
-    * "Retry when Max-Age is reached on 5.03 up to N times,
-      and then (or on other errors) restart discovery and
-      round-robin through choices"?
-
-* Reconsider the filtering rules, make hierarchy traversal explicit.
-
-* Allow empty submissions
-  (see global example)
 
 # Proposed RD extensions
 
