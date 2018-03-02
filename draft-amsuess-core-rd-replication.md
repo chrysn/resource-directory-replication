@@ -23,6 +23,7 @@ author:
   code: '1020'
   country: Austria
   phone: "+43-664-9790639"
+  email: christian@amsuess.com
 
 --- abstract
 
