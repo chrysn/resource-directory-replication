@@ -621,7 +621,7 @@ Such a setup is easier if all hosts provide both registration and lookup functio
 
 This scenario describes a way to provide connectivity into devices in difficult network situations
 based on identifiers of their cryptographic keys,
-the KID context identifiers of OSCORE.
+in this case the (sufficently long) ID context plus recipient ID of OSCORE ({{?I-D.ietf-core-object-security}}).
 A global network of untrusted Resource Directory servers is built,
 and the individual servers provide network relaying services for endpoints that operate behind NAT or firewalls.
 
@@ -637,7 +637,7 @@ It assumes the existance of two other hypothetical mechanisms:
 
     A URI of the form `oscore://VGhh...2aWNl/sensor/temp` refers to
     a resource `/sensor/temp/` on any OSCORE capable host
-    with which the client has a key established under the KID context
+    with which the client has a key established under the KID context and recipient ID
     given by the base64 string in the authority component.
 
     To resolve the URI to a concrete protocol and socket,
