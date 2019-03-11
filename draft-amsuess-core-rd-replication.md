@@ -501,7 +501,7 @@ the `/rd-lookup/ep?href=/*` and `/rd-lookup/res?provenance=/*` resources
 of known RDs on other hosts,
 and might get updated internally with state from a co-hosted RD
 or observe that using an internal interface.
-As there is really suitable content format and observation mechanism for those yet,
+As there is no really suitable content format and observation mechanism for those yet,
 the exchanges are partially described in words here.
 
 RDAO announcements point to the nearest host
