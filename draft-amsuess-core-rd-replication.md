@@ -368,7 +368,7 @@ a parameter can be introduced there:
   If there is a `=` sign in the query argument,
   only links with matching provenance will be reported.
 
-## Lifetime Age
+## Lifetime reporting
 
 The result of an endpoint lookup as a whole has inhomogenous cache properties
 that would determine its Max-Age:
@@ -380,7 +380,7 @@ that would determine its Max-Age:
 As currently specified, a lookup client has no way to tell where in its lifetime an endpoint is.
 Therefore, a new link attribute is suggested that allows the RD to share that information:
 
-The new link attribute Lifetime Age (lt-age) is described for use in RD Endpoint Lookups.
+The new link attribute Lifetime Remaining (lt-remaining) is described for use in RD Endpoint Lookups.
 Valid values are integers from 0 to the lifetime of the registration.
 The value indicates how many seconds have passed since the endpoint last renewed its registration.
 
@@ -393,7 +393,7 @@ It should therefore only be used with responses that carry the default Max-Age o
 Clients that use the lookup interface
 (especially RD-aware proxies)
 are free to treat that record and its corresponding resource records as fresh
-until after the difference of lt and lt-age seconds have passed
+until after lt-remaining seconds have passed
 since the endpoint lookup result was obtained,
 especially if the origin server has become unavailable.
 
@@ -528,7 +528,7 @@ the RD at 3 sends notifications to the observing lookup proxies X, Y and Z:
 
     Res: Patch Result
     Add one record: </reg/42>;ep="endpoint1";d="facility23.eu.example.com";
-        con="coap://[2001:db8:23::1]";lt-age=0
+        con="coap://[2001:db8:23::1]";lt-remaining=90000
 
 As soon as that is processed, clients can query LP-Z
 
@@ -540,11 +540,11 @@ As soon as that is processed, clients can query LP-Z
     <coap://[2001:db8:23::3]/reg/42>;ep="endpoint1";
         d="facility23.eu.example.com";con="coap://[2001:db8:23::1]"
 
-(Note that lt-age is elided to the client
+(Note that lt-remaining is elided to the client
 as per the security considerations for that information).
 
 When a net split happens that cuts LP-Z's site off the rest,
-it keeps that information available until the lt-age runs out.
+it keeps that information available until the lt-remaining runs out.
 
 When RD-C unexpectedly becomes unavailable,
 endpoint1 fails to renew its registration.
@@ -556,7 +556,7 @@ RD-B then sends an update to the proxies:
 
     Res: Patch Result
     Add one record: </reg/11>;ep="endpoint1";d="facility23.eu.example.com";
-        con="coap://[2001:db8:23::1]";lt-age=0
+        con="coap://[2001:db8:23::1]";lt-remaining=90000
 
 The proxies remove C's registration `/reg/42` based on the duplicate name
 and now answer requests like this:
