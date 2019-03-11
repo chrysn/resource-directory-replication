@@ -322,7 +322,9 @@ and in presence of multiple attributes, only the last should be considered.
 \[ TODO: If a something link-format-ish comes up during the development of this document
 which allows setting base-hrefs in-line, evaluate whether it really makes sense to
 inherit anchor's rules or whether it's better to phrase it in a way that
-the requested base URI always counts. \]
+the requested base URI always counts.
+A composite CoRAL endpoint-and-resource lookup on the RD might make this extension proposal obsolete.
+\]
 
 The URI given in the "provenance" attribute describes
 where the information in the link was obtained from.
