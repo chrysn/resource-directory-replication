@@ -230,9 +230,9 @@ Also, annotating the links in the endpoint lookup with information about which r
 would help the proxy keep all the data around to solve more complex queries.
 The provenance extension is proposed for that purpose.
 
-In its extreme form, the proxy can observe the complete lookup resources of the Resource Directory.
+In its extreme form, the proxy can observe the complete endpoint lookup resource of the Resource Directory.
+and run a dedicated observation for each registration.
 It can then answer all queries on its own based on the continuously fresh state transferred in the observations.
-That form requires the RD to support the provenance extension.
 
 For such proxies, it can be suitable to configure them to use stale cache values
 for extended periods of time when the RD becomes intermittently unavailable.
