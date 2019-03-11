@@ -627,11 +627,7 @@ and the individual servers provide network relaying services for endpoints that 
 
 It assumes the existance of two other hypothetical mechanisms:
 
-* The RD Parameter named "proxy".
-
-    An endpoint can ask the RD to act as a reverse proxy for it
-    by adding the `proxy` registration parameter;
-    an RD that does proxying disregards the implicit `con` parameter and announces a name of its own instead.
+* The "proxy" parameter from {{?I-D.amsuess-core-resource-directory-extensions}}
 
 * A URI scheme called "oscore".
 
